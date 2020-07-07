@@ -33,15 +33,15 @@ while true; do
 				exit
 			else if [ "$NumCarts" -eq 1 ];
 			then
-				read -p "Please enter the cart number you want: " CartNum
-				read -p "You want information for cart "$Building"CB"$CartNum", is that correct? y/n: " YesNo
+				read -p "Please enter the cart name you want: " CartName
+				read -p "You want information for cart "$CartName", is that correct? y/n: " YesNo
 				if [ "$YesNo" == "y" ];
 				then
-					echo "Getting information for cart "$Building"CB"$CartNum" and writing to file 'single/"$Building"CB"$CartNum"'."
+					echo "Getting information for cart "$CartName" and writing to file 'single/"$CartName".csv'."
 					sleep 3
 					mkdir single
-					cp cart_template.csv single/"$Building"CB"$CartNum".csv # This line requires files from GAM
-					cat needed_file/full.csv | grep -w ""$Building"CB"$CartNum"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468"."$470","$471","$472","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> single/"$Building"CB"$CartNum".csv # This line requires files from GAM
+					cp cart_template.csv single/"$CartName".csv # This line requires files from GAM
+					cat needed_file/full.csv | grep -w ""$CartName"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468"."$470","$471","$472","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> single/"$CartName".csv # This line requires files from GAM
 					break
 				fi
 			fi
