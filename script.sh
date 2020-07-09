@@ -10,8 +10,8 @@
 # in the repository
 ###############################################################
 while true; do
-	read -p "Please enter the building wanted (ES, MS, HS, OMTC): " Building
-	if ([ "$Building" == "ES" ] || [ "$Building" == "MS" ] || [ "$Building" == "HS" ] || [ "$Building" == "OMTC" ]);
+	read -p "Please enter the building wanted (ES, MS, HS, OMTC, ALC): " Building
+	if ([ "$Building" == "ES" ] || [ "$Building" == "MS" ] || [ "$Building" == "HS" ] || [ "$Building" == "OMTC" ] || [ "$Building" == "ALC" ]);
 	then
 		echo "You chose "$Building""
 		read -p "Is this correct? y/n: " _Yn
