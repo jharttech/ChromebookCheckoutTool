@@ -27,7 +27,7 @@ while true; do
 				while [ "$counter" -le "$NumCarts" ];
 				do
 					cp cart_template.csv "$Building"/"$Building"CB"$counter".csv # This line requires files from GAM
-					cat needed_file/full.csv | grep -w ""$Building"CB"$counter"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468","$470","$471","$472","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> "$Building"/"$Building"CB"$counter".csv # This line requires files from GAM
+					cat needed_file/full.csv | grep -w ""$Building"CB"$counter"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468","$470","$471","$472","$470","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> "$Building"/"$Building"CB"$counter".csv # This line requires files from GAM
 					counter=$((counter+1))
 				done
 				exit
@@ -41,7 +41,7 @@ while true; do
 					sleep 3
 					mkdir single
 					cp cart_template.csv single/"$CartName".csv # This line requires files from GAM
-					cat needed_file/full.csv | grep -w ""$CartName"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468"."$470","$471","$472","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> single/"$CartName".csv # This line requires files from GAM
+					cat needed_file/full.csv | grep -w ""$CartName"" | awk -F, '{print "echo -n "$1",;echo -n $(date -d @$(("$54" / 1000)) +%Y%m%d);echo -n ,"$1467","$468"."$470","$471","$472","$470","; if (length($1467)>13) {print "echo "substr($1467,length($1467)-13,length($1467))}else{print "echo "$1467}}' | sh >> single/"$CartName".csv # This line requires files from GAM
 					break
 				fi
 			fi
