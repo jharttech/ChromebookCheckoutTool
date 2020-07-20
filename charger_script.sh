@@ -10,7 +10,7 @@
 # in the repository, that were generated using carts_script.sh
 ##################################################################
 while true; do
-	read - "Please enter the building your desired cart resides in (ES, MS, HS, OMTC, ALC): " Building
+	read -p "Please enter the building your desired cart resides in (ES, MS, HS, OMTC, ALC): " Building
 	if ([ "$Building" == "ES" ] || [ "$Building" == "MS" ] || [ "$Building" == "HS" ] || [ "$Building" == "OMTC" ] || [ "$Building" == "ALC" ]);
 	then
 		echo "You chose "$Building""
