@@ -23,21 +23,23 @@ while true; do
 				Counter=1;
 				echo "Now going to get chargers for "$NumCarts" and write cart charger files"
 				sleep 3
+				mkdir chargers
+				mkdir chargers/"$Building"
 				while [ "$Counter" -le "$NumCarts" ];
 				do
-					CurrentCart=$(ls carts/"$Building" | grep carts/"$Building"/"$Building"CB"$Counter".csv)
+					CurrentCart=$(ls carts/"$Building" | grep "$Building"CB"$Counter".csv)
 					if [ "$CurrentCart" == "" ];
 					then
 						break;
 					else if [ "$CurrentCart" == ""$Building"CB"$Counter".csv" ];
 					then
-						mkdir chargers
 						cd chargers
 						cp ../chargers_template.csv "$Building"/"$Building"CB"$Counter"_chargers.csv
-						cat ../carts/"$Building"/"$CurrentCart" | grep "$Building"CB"$Counter" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' | sh >> "$Building"CB"$Counter"_chargers.csv
+						cat ../carts/"$Building"/"$CurrentCart" | grep "$Building"CB"$Counter" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> "$Building"/"$Building"CB"$Counter"_chargers.csv
 					fi
 					fi
 					Counter=$((Counter+1))
+					cd ../
 				done
 				exit
 			else if [ "$NumCarts" -eq 1 ];
@@ -52,7 +54,7 @@ while true; do
 					cd chargers
 					mkdir single
 					cp ../chargers_template.csv single/"$CartName"_chargers.csv
-					cat ../carts/"$Building"/"$CartName".csv | grep "$CartName" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' | sh >> single/"$CartName"_chargers.csv
+					cat ../carts/"$Building"/"$CartName".csv | grep "$CartName" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> single/"$CartName"_chargers.csv
 					break
 				fi
 			fi
