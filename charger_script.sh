@@ -34,7 +34,7 @@ while true; do
 					else if [ "$CurrentCart" == ""$Building"CB"$Counter".csv" ];
 					then
 						cd chargers
-						cp ../chargers_template.csv "$Building"/"$Building"CB"$Counter"_chargers.csv
+						cp ../need_file/chargers_template.csv "$Building"/"$Building"CB"$Counter"_chargers.csv
 						cat ../carts/"$Building"/"$CurrentCart" | grep "$Building"CB"$Counter" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> "$Building"/"$Building"CB"$Counter"_chargers.csv
 					fi
 					fi
@@ -53,7 +53,7 @@ while true; do
 					mkdir chargers
 					cd chargers
 					mkdir single
-					cp ../chargers_template.csv single/"$CartName"_chargers.csv
+					cp ../needed_file/chargers_template.csv single/"$CartName"_chargers.csv
 					cat ../carts/"$Building"/"$CartName".csv | grep "$CartName" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> single/"$CartName"_chargers.csv
 					break
 				fi

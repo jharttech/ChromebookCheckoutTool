@@ -21,7 +21,7 @@ while true; do
 			mkdir students
 			cd students
 			mkdir $OrgUnit
-			cp ../studentUser_template.csv "$OrgUnit"/"$OrgUnit".csv
+			cp ../needed_file/studentUser_template.csv "$OrgUnit"/"$OrgUnit".csv
 			cat ../needed_file/full_student.csv | grep "$OrgUnit" | awk -F, '{split($1,z,"@"); print echo ""$1","$25","$23","$26",,"z[1]}' >> "$OrgUnit"/"$OrgUnit".csv # This line requires files from GAM
 			break
 		fi
