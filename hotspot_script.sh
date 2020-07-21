@@ -10,7 +10,7 @@ while true; do
 	read -p "Please enter the amount of hotspots you would like to add to campus: " ItemCount
 	read -p "Please enter purchase date in ISO format (ex. 20200720): " IsoDate
 	read -p "Please enter the Manufacturer of the hotspots: " Manufacturer
-	read -p "Please enter the Brand of the hotspots: (ex. Moxee) " Brand
+	read -p "Please enter the Brand of the hotspots: (ex. MoxeeK779HSDL) " Brand
 	read -p "Please enter the Purchase Cost of each hotspot: " Cost
 	read -p "Please enter the PO Number used to purchase the hotspots: " PONum
 	read -p "You have entered an amount of "$ItemCount" "$Brand" made by "$Manufacturer" hotspots purchased on "$IsoDate", with a cost of "$Cost" each, using PO Number "$PONum". Is that correct? y/n " _Yn
