@@ -34,8 +34,8 @@ while true; do
 					else if [ "$CurrentCart" == ""$Building"CB"$Counter".csv" ];
 					then
 						cd chargers
-						cp ../need_file/chargers_template.csv "$Building"/"$Building"CB"$Counter"_chargers.csv
-						cat ../carts/"$Building"/"$CurrentCart" | grep "$Building"CB"$Counter" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> "$Building"/"$Building"CB"$Counter"_chargers.csv
+						cp ../needed_file/chargers_template.csv "$Building"/"$Building"CB"$Counter"_chargers.csv
+						cat ../carts/"$Building"/"$CurrentCart" | grep "$Building"CB"$Counter" | awk -F, '{print echo ""$7","$8","$3",charger,1"}' >> "$Building"/"$Building"CB"$Counter"_chargers.csv
 					fi
 					fi
 					Counter=$((Counter+1))
@@ -54,7 +54,7 @@ while true; do
 					cd chargers
 					mkdir single
 					cp ../needed_file/chargers_template.csv single/"$CartName"_chargers.csv
-					cat ../carts/"$Building"/"$CartName".csv | grep "$CartName" | awk -F, '{print echo ""$7","$8","$3","$9",1"}' >> single/"$CartName"_chargers.csv
+					cat ../carts/"$Building"/"$CartName".csv | grep "$CartName" | awk -F, '{print echo ""$7","$8","$3",charger,1"}' >> single/"$CartName"_chargers.csv
 					break
 				fi
 			fi
