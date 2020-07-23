@@ -47,19 +47,15 @@ while true; do
 					echo "     hotspot,"$Brand",MG Schools,"$Manufacturer","$IsoDate","$Cost","$PONum","$SerialNum","$SerialNum","$SimNum"" >> errorLog.txt
 					sleep 4
 					Counter=$((Counter+1))
-					break
 				fi
 				if [ "$Duplicate" == "" ];
 				then
 					echo "hotspot,"$Brand",MG Schools,"$Manufacturer","$IsoDate","$Cost","$PONum","$SerialNum","$SerialNum","$SimNum"" >> "$FileName"
 					echo "hotspot,"$Brand",MG Schools,"$Manufacturer","$IsoDate","$Cost","$PONum","$SerialNum","$SerialNum","$SimNum"" >> hotspot_master_list.csv
 					Counter=$((Counter+1))
-					break
 				fi
-				break
 			fi
 		done
-		break
 	fi
 done
 exit
