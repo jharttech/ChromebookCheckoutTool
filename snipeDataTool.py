@@ -163,7 +163,7 @@ def cartDataTool(argument):
         #Run cart_script.sh
         subprocess.call("scripts/cart_script.sh")
         #Revert permission on cart_script.sh
-        os.chmod('scirpts/cart_script.sh', 0o644)
+        os.chmod('scripts/cart_script.sh', 0o644)
     elif argument == 2:
         #Query GAM for deprovisioned devices
         os.system("gam print cros allfields query 'status:deprovisioned' > needed_file/deprovisioned_full.csv")
