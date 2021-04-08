@@ -1,29 +1,39 @@
 import csv
+import os
 import subprocess
 import datetime
 
 def main():
-    #building = getBuilding()
-    test = getWantedData()
-    print(test)
+    getWantedData()
+    building = getBuilding()
+    if building == 'ALL':
+        file = '../needed_file/cartFull.csv'
+        dest = '../carts'
+        subprocess.call(['mv',file,dest])
+        print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
+        exit()
+    cart = getCart(building)
+    print(cart)
 
 def getBuilding():
-    buildingList = ['ES', 'MS', 'HS', 'OMTC', 'ALC']
+    valid = False
     while not valid:
-        building = input("Please enter the building wanted (ES, MS, HS, OMTC, ALC): ")
-        building = building.toupper()
+        buildingList = getBuildingNames()
+        buildingList.append('ALL')
+        building = input("Please enter the building wanted (" + str(', '.join(buildingList)) + "): ")
+        building = building.upper()
         if building in buildingList:
             valid = True
             print("You chose",building)
-            correct = input("Is that the correct building? (y/n)" )
-            if correct.tolower() != 'y':
+            correct = input("Is that the correct building? (y/n) " )
+            if correct.lower() != 'y':
                 valid = False
             else:
                 return building
 
 def getWantedData():
     headerList = ['deviceId', 'autoUpdateExpiration', 'serialNumber', 'macAddress', 'model', 'orgUnitPath']
-    #headerNum = []
+    #headerNum = [] #DEBUG INFO
     headerToNum = {}
     lines = []
     tempRow = []
@@ -39,7 +49,9 @@ def getWantedData():
                     colName = str(row[x])
                     if colName in headerList:
                         num = headerToNum.update({colName : x})
-                        #headerNum.append(num)
+                        #headerNum.append(num) #DEBUG INFO
+                headerRow = ['deviceId','autoUpdateExpiration','Serial Number','macAddress','Model Name','notes','Location','Manufacturer','Category','Asset Tag']
+                lines.append(headerRow)
                 line_count += 1
             else:
                 notes = 'Initial Import'
@@ -55,7 +67,6 @@ def getWantedData():
                     while len(tempAssetTag) > 14:
                         tempAssetTag.remove(tempAssetTag[0])
                     assetTag = ''.join(tempAssetTag)
-                #testVar = headerToNum.get(, "Error getting header number!")
                 tempRow = [row[headerToNum.get('deviceId', "Error getting header number!")],
                             updateExp, row[headerToNum.get('serialNumber')],
                             row[headerToNum.get('macAddress')], row[headerToNum.get('model')], notes,
@@ -63,10 +74,122 @@ def getWantedData():
                 lines.append(tempRow)
                 line_count += 1
         if tempRow != []:
-            with open('cartName.csv', mode='w') as cart_file:
+            with open('../needed_file/cartFull.csv', mode='w') as cart_file:
                 for i in range(0,len(lines)):
-                    cartName = csv.writer(cart_file, delimiter=',')
-                    cartName.writerow(lines[i])
-        return
+                    cartFull = csv.writer(cart_file, delimiter=',')
+                    cartFull.writerow(lines[i])
+
+def getCart(building):
+    tempCart = []
+    num = None
+    bookCount = 0
+    cart = input("Please enter the cart name desired, or enter 'ALL' for all carts in " + building + ": ")
+    cartUp = cart.upper()
+    if cartUp != 'ALL':
+        with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            lines = []
+            nCol = len(next(csv_reader))
+            csv_file.seek(0)
+            for row in csv_reader:
+                if line_count == 0:
+                    for x in range(0,nCol):
+                        columnName = str(row[x])
+                        if columnName == 'Location':
+                            num = x
+                    lines.append(row)
+                    line_count += 1
+                else:
+                    tempCart = row[num].split('/')
+                    tempCart = tempCart[len(tempCart) - 1].upper()
+                    if tempCart == cartUp:
+                        lines.append(row)
+                        line_count += 1
+        with open('../carts/single/' + cart + '.csv', mode='w') as cart_file:
+            for i in range(0,len(lines)):
+                cartFile = csv.writer(cart_file, delimiter=',')
+                cartFile.writerow(lines[i])
+
+    elif cartUp == 'ALL':
+        listOfCarts = getNumOfCarts(building)
+        newDir = building
+        num = None
+        newDirLocal = '../carts/'
+        subprocess.call(['mkdir',newDirLocal + newDir])
+        for b in range(0,len(listOfCarts)):
+            with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                lines = []
+                nCol = len(next(csv_reader))
+                csv_file.seek(0)
+                for row in csv_reader:
+                    if line_count == 0:
+                        for x in range(0,nCol):
+                            columnName = str(row[x])
+                            if columnName == 'Location':
+                                num = x
+                        lines.append(row)
+                        line_count += 1
+                    else:
+                        tempCart = row[num].split('/')
+                        tempCart = tempCart[len(tempCart) - 1].upper()
+                        if tempCart == listOfCarts[b].upper():
+                            lines.append(row)
+                        line_count += 1
+            with open('../carts/' + building + '/' + listOfCarts[b] + '.csv', mode='w') as cart_file:
+                for i in range(0,len(lines)):
+                    cartFile = csv.writer(cart_file, delimiter=',')
+                    cartFile.writerow(lines[i])
+
+def getNumOfCarts(building):
+    cartNames = []
+    tempCartNames = []
+    tempList = []
+    num = None
+    with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        nCol = len(next(csv_reader))
+        csv_file.seek(0)
+        for row in csv_reader:
+            if line_count == 0:
+                for x in range(0,nCol):
+                    columnName = str(row[x])
+                    if columnName == 'Location':
+                        num = x
+                        line_count += 1
+            else:
+                if building in str(row[num]) and str(row[num]) not in tempList:
+                    tempList.append(row[num])
+    for z in range(0,len(tempList)):
+        tempCartNames = tempList[z].split('/')
+        if building in tempCartNames[len(tempCartNames) - 1]:
+            cartNames.append(tempCartNames[len(tempCartNames) - 1])
+    return cartNames
+
+def getBuildingNames():
+    buildingList = []
+    tempBuilding = []
+    num = None
+    with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        nCol = len(next(csv_reader))
+        csv_file.seek(0)
+        for row in csv_reader:
+            if line_count == 0:
+                for x in range(0,nCol):
+                    columnName = str(row[x])
+                    if columnName == 'Location':
+                        num = x
+                        line_count += 1
+            else:
+                tempBuilding = row[num].split('/')
+                print(tempBuilding)
+                if (len(tempBuilding) > 3 and tempBuilding[2] not in buildingList:
+                    buildingList.append(tempBuilding[2])
+    return buildingList
 
 main()
