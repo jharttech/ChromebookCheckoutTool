@@ -8,7 +8,7 @@ def main():
     building = getBuilding()
     if building == 'ALL':
         file = '../needed_file/cartFull.csv'
-        dest = '../carts'
+        dest = '../carts/cartFull.csv'
         subprocess.call(['mv',file,dest])
         print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
         exit()
