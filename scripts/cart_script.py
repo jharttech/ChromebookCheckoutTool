@@ -56,11 +56,11 @@ def getWantedData():
             else:
                 notes = 'Initial Import'
                 category = 'Chromebook'
-                if row[headerToNum.get('autoUpdateExpiration')] != '':
+                if row[headerToNum.get('autoUpdateExpiration', "Error getting header number!")] != '':
                     updateExp = datetime.datetime.fromtimestamp(float(row[headerToNum.get('autoUpdateExpiration')])/1000.0)
                     updateExp = updateExp.strftime('%Y-%m-%d')
                 else:
-                    updateExp = row[headerToNum.get('autoUpdateExpiration')]
+                    updateExp = row[headerToNum.get('autoUpdateExpiration', "Error getting header number!")]
                 assetTag = row[headerToNum.get('serialNumber')]
                 if len(assetTag) > 14:
                     tempAssetTag = list(assetTag)
@@ -68,9 +68,9 @@ def getWantedData():
                         tempAssetTag.remove(tempAssetTag[0])
                     assetTag = ''.join(tempAssetTag)
                 tempRow = [row[headerToNum.get('deviceId', "Error getting header number!")],
-                            updateExp, row[headerToNum.get('serialNumber')],
-                            row[headerToNum.get('macAddress')], row[headerToNum.get('model')], notes,
-                            row[headerToNum.get('orgUnitPath')], row[headerToNum.get('model')], category, assetTag]
+                            updateExp, row[headerToNum.get('serialNumber', "Error getting header number!")],
+                            row[headerToNum.get('macAddress', "Error getting header number!")], row[headerToNum.get('model', "Error getting header number!")], notes,
+                            row[headerToNum.get('orgUnitPath', "Error getting header number!")], row[headerToNum.get('model', "Error getting header number!")], category, assetTag]
                 lines.append(tempRow)
                 line_count += 1
         if tempRow != []:
