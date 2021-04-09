@@ -14,8 +14,6 @@ def main():
     else:
         getStudentsInfo(building)
 
-
-
 def getWantedData():
     headerList = ['primaryEmail', 'name.givenName', 'name.familyName', 'orgUnitPath']
     headerToNum = {}
