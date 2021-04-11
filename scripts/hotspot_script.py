@@ -4,8 +4,14 @@ import subprocess
 
 def main():
     info = getHotspotInfo()
-    test = createHotspotEntry(info)
-    print(test)
+    valid = False
+    while not valid:
+        newHotspots = createHotspotEntry(info)
+        print(newHotspots)
+        response = input("Does the entries above look correct? (y/n): ").lower()
+        if response == 'y':
+            valid = True
+
 
 def getHotspotInfo():
     valid = False
@@ -60,7 +66,7 @@ def createHotspotEntry(info):
             simCard = input("Please enter the Sim Card Number (no spaces) for hotspot " + str(i + 1) + ": ")
             print("You have entered hotspot " + str(i + 1) + "'s Serial Number as: " + str(serialNumber))
             print("and Sim Card Number as: " + simCard)
-            response = input("Is that information correct? ").lower()
+            response = input("Is that information correct? (y/n): ").lower()
             if response == 'y':
                 valid = True
                 hotspotDict.update({i + 1 : {'Serial Number' : serialNumber,'Sim Card Number' : simCard}})
