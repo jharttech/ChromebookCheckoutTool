@@ -13,6 +13,8 @@ def main():
         exit()
     else:
         getStudentsInfo(building)
+        print('Requested student data has been compiled into ..ChromebookCheckoutTool/students/"SelectedBuilding".csv')
+        exit()
 
 def getWantedData():
     headerList = ['primaryEmail', 'name.givenName', 'name.familyName', 'orgUnitPath']
@@ -53,6 +55,9 @@ def getWantedData():
                 for i in range(0,len(lines)):
                     studentFull = csv.writer(student_file, delimiter=',')
                     studentFull.writerow(lines[i])
+        else:
+            print('Error: no student data to add.  Bummer! Now going to exit!')
+            exit()
 
 def getStudentsInfo(building):
     with open('../needed_file/studentFull.csv', mode='r') as csv_file:
