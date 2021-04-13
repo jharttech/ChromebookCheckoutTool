@@ -5,6 +5,8 @@ import datetime
 def main():
     setup()
     getWantedData()
+    print("All deprovisioned units data have been compiled into ...ChromebookCheckoutTool/carts/deprovisioned/deprovisionedFull.csv")
+    exit()
 
 def getWantedData():
     headerList = ['deviceId', 'autoUpdateExpiration', 'serialNumber', 'macAddress', 'model', 'orgUnitPath']
@@ -53,7 +55,10 @@ def getWantedData():
                 for i in range(0,len(lines)):
                     deproFull = csv.writer(cart_file, delimiter=',')
                     deproFull.writerow(lines[i])
-    return
+        else:
+            print("Error: No rows added! Killing script now!")
+            exit()
+    return True
 
 def setup():
     dir = '../carts/deprovisioned'
