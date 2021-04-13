@@ -12,6 +12,9 @@ def main():
         response = input("Does the entries above look correct? (y/n): ").lower()
         if response == 'y':
             valid = True
+    if valid == True:
+        print('Requested hotspot data has been compiled into ...ChromebookCheckoutTool/hotspots/"createdFileName", Thank You!')
+        exit()
 
 
 def getHotspotInfo():
