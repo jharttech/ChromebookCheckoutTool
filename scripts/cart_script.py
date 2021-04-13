@@ -13,7 +13,8 @@ def main():
         print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
         exit()
     cart = getCart(building)
-    print(cart)
+    print("Requested data and files have been created.  Thank you!")
+
 
 def getBuilding():
     valid = False
@@ -78,6 +79,10 @@ def getWantedData():
                 for i in range(0,len(lines)):
                     cartFull = csv.writer(cart_file, delimiter=',')
                     cartFull.writerow(lines[i])
+        else:
+            print("Error: No lines added.  Bailing out now!")
+            exit()
+
 
 def getCart(building):
     tempCart = []
@@ -110,7 +115,6 @@ def getCart(building):
             for i in range(0,len(lines)):
                 cartFile = csv.writer(cart_file, delimiter=',')
                 cartFile.writerow(lines[i])
-
     elif cartUp == 'ALL':
         listOfCarts = getNumOfCarts(building)
         newDir = building
