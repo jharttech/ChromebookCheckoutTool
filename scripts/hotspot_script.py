@@ -124,6 +124,9 @@ def createHotspotEntry(info):
             for z in range(0,len(lines)):
                 hotspotCSV = csv.writer(hotspotCsv, delimiter=',')
                 hotspotCSV.writerow(lines[z])
+    else:
+        print("Noting to be done!... Pulling rip cord now.")
+        exit()
     return hotspotDict
 
 main()
