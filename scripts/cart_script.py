@@ -7,13 +7,14 @@ def main():
     getWantedData()
     building = getBuilding()
     if building == 'ALL':
-        file = '../needed_file/cartFull.csv'
-        dest = '../carts/cartFull.csv'
+        file = 'needed_file/cartFull.csv'
+        dest = 'carts/cartFull.csv'
         subprocess.call(['mv',file,dest])
         print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
         exit()
     cart = getCart(building)
     print("Requested data and files have been created.  Thank you!")
+    exit()
 
 
 def getBuilding():
@@ -39,7 +40,7 @@ def getWantedData():
     lines = []
     tempRow = []
     num = None
-    with open('../needed_file/full.csv') as csv_file:
+    with open('needed_file/full.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         nCol = len(next(csv_reader))
         csv_file.seek(0)
@@ -75,7 +76,7 @@ def getWantedData():
                 lines.append(tempRow)
                 line_count += 1
         if tempRow != []:
-            with open('../needed_file/cartFull.csv', mode='w') as cart_file:
+            with open('needed_file/cartFull.csv', mode='w') as cart_file:
                 for i in range(0,len(lines)):
                     cartFull = csv.writer(cart_file, delimiter=',')
                     cartFull.writerow(lines[i])
@@ -91,7 +92,7 @@ def getCart(building):
     cart = input("Please enter the cart name desired, or enter 'ALL' for all carts in " + building + ": ")
     cartUp = cart.upper()
     if cartUp != 'ALL':
-        with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+        with open('needed_file/cartFull.csv', mode='r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             lines = []
@@ -111,7 +112,7 @@ def getCart(building):
                     if tempCart == cartUp:
                         lines.append(row)
                         line_count += 1
-        with open('../carts/single/' + cart + '.csv', mode='w') as cart_file:
+        with open('carts/single/' + cart + '.csv', mode='w') as cart_file:
             for i in range(0,len(lines)):
                 cartFile = csv.writer(cart_file, delimiter=',')
                 cartFile.writerow(lines[i])
@@ -119,10 +120,10 @@ def getCart(building):
         listOfCarts = getNumOfCarts(building)
         newDir = building
         num = None
-        newDirLocal = '../carts/'
+        newDirLocal = 'carts/'
         subprocess.call(['mkdir',newDirLocal + newDir])
         for b in range(0,len(listOfCarts)):
-            with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+            with open('needed_file/cartFull.csv', mode='r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 line_count = 0
                 lines = []
@@ -142,7 +143,7 @@ def getCart(building):
                         if tempCart == listOfCarts[b].upper():
                             lines.append(row)
                         line_count += 1
-            with open('../carts/' + building + '/' + listOfCarts[b] + '.csv', mode='w') as cart_file:
+            with open('carts/' + building + '/' + listOfCarts[b] + '.csv', mode='w') as cart_file:
                 for i in range(0,len(lines)):
                     cartFile = csv.writer(cart_file, delimiter=',')
                     cartFile.writerow(lines[i])
@@ -152,7 +153,7 @@ def getNumOfCarts(building):
     tempCartNames = []
     tempList = []
     num = None
-    with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+    with open('needed_file/cartFull.csv', mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         nCol = len(next(csv_reader))
@@ -177,7 +178,7 @@ def getBuildingNames():
     buildingList = []
     tempBuilding = []
     num = None
-    with open('../needed_file/cartFull.csv', mode='r') as csv_file:
+    with open('needed_file/cartFull.csv', mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         nCol = len(next(csv_reader))
