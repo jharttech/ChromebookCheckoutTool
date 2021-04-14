@@ -64,9 +64,9 @@ def createHotspotEntry(info):
     headerList = ['Category', 'Model Name', 'Location', 'Manufacturer',
                     'Purchase Date', 'Purchase Cost', 'Order Number',
                     'Asset Tag', 'Serial Number', 'Sim Card Number']
-    file = ('../hotspots/' + str(info.get('isoDate') + "-PO" + info.get('poNumber') + "-hotspots.csv"))
-    errorFile = '../hotspots/errorLog.csv'
-    masterFile = '../hotspots/hotspot_master_list.csv'
+    file = ('hotspots/' + str(info.get('isoDate') + "-PO" + info.get('poNumber') + "-hotspots.csv"))
+    errorFile = 'hotspots/errorLog.csv'
+    masterFile = 'hotspots/hotspot_master_list.csv'
     subprocess.call(['touch',masterFile])
     print("Now going to ask for information about each hotspot being added.")
     for n in range(0,counter):
