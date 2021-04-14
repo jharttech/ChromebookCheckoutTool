@@ -6,8 +6,8 @@ def main():
     getWantedData()
     building = getBuilding()
     if building == 'ALL':
-        file = '../needed_file/studentFull.csv'
-        dest = '../students/studentFull.csv'
+        file = 'needed_file/studentFull.csv'
+        dest = 'students/studentFull.csv'
         subprocess.call(['mv',file,dest])
         print("All student data has been compiled into ..ChromebookCheckoutTool/students/studentFull.csv")
         exit()
@@ -22,7 +22,7 @@ def getWantedData():
     lines = []
     tempRow = []
     num = None
-    with open('../needed_file/full_student.csv') as csv_file:
+    with open('needed_file/full_student.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         nCol = len(next(csv_reader))
         csv_file.seek(0)
@@ -51,7 +51,7 @@ def getWantedData():
                             notes, username]
                 lines.append(tempRow)
         if tempRow != []:
-            with open('../needed_file/studentFull.csv', mode='w') as student_file:
+            with open('needed_file/studentFull.csv', mode='w') as student_file:
                 for i in range(0,len(lines)):
                     studentFull = csv.writer(student_file, delimiter=',')
                     studentFull.writerow(lines[i])
@@ -60,7 +60,7 @@ def getWantedData():
             exit()
 
 def getStudentsInfo(building):
-    with open('../needed_file/studentFull.csv', mode='r') as csv_file:
+    with open('needed_file/studentFull.csv', mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         lines = []
@@ -79,7 +79,7 @@ def getStudentsInfo(building):
                 tempBuilding = tempBuilding[len(tempBuilding) - 1].upper()
                 if tempBuilding == building:
                     lines.append(row)
-    with open('../students/' + building + '.csv', mode='w') as student_file:
+    with open('students/' + building + '.csv', mode='w') as student_file:
         for i in range(0,len(lines)):
             studentFile = csv.writer(student_file, delimiter=',')
             studentFile.writerow(lines[i])
@@ -104,7 +104,7 @@ def getBuildingNames():
     buildingList = []
     tempBuilding = []
     num = None
-    with open('../needed_file/studentFull.csv', mode='r') as csv_file:
+    with open('needed_file/studentFull.csv', mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         nCol = len(next(csv_reader))
