@@ -9,14 +9,12 @@ def main():
     #clear screen
     os.system("clear")
     #set initial value for while loop to run
-    leave = 1
+    quit = False
     print("Welcome to MG snipeIT data tool\n")
     #Run setup function
     setup()
     #Run script based on what user wants to do
-    while True:
-        if leave != 1:
-            break
+    while quit == False:
         #Set variable for debug sake, otherwise run function
         chosenData = choseDataType()
         #print(chosenData) UNCOMMENT FOR DEGUB INFO
@@ -36,16 +34,17 @@ def main():
             print("Unknown error, bailing out!")
             time.sleep(3)
             #End while loop
-            leave = 2
-        print("\nOperation Complete. You are now ready to transfer data to your SnipeIT server.\nDo you want to perform any other tasks?\n1) Yes\n2) No")
+            quit = True
+        leave = input("\nOperation Complete. You are now ready to transfer data to your SnipeIT server.\nDo you want to perform any other tasks? (y/n) ").lower()
         #Take user input
-        leave = int(input())
+        if leave == 'n':
+            quit = True
     print("Have a great day! ~Jhart")
     exit()
 
 def setup():
     #Array of file names
-    directories = ["students", "carts"]
+    directories = ["students", "carts", "hotspots"]
     #Set FNULL varialbe to dev null
     FNULL = open(os.devnull, 'w')
     #start while loop for number of directories
@@ -56,48 +55,30 @@ def setup():
 
 def choseDataType():
     #Set default values for loops to run
-    firstResponse = "Invalid option!"
-    correct = 2
-    while True:
-        if firstResponse != "Invalid option!":
-            break
-        if correct != 2:
-            break
-        print("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) EXIT")
+    valid = False
+    while valid == False:
         #Take user input
-        dataType = int(input())
+        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) EXIT\n"))
         #Return value from dataSwitch function
         firstResponse = dataSwitch(dataType)
-        print(firstResponse)
-        print("\nIs this correct:\n1) Yes\n2) No")
+        correct = input(str(firstResponse) + "\nIs this correct: (y/n) ").lower()
         #Take user input
-        correct = int(input())
-        if correct == 2:
-            #Set firstResponse value back to Invalid option so that loop restarts
-            firstResponse = "Invalid option!"
+        if correct == 'y':
+            valid = True
     return(dataType)
 
 def studentDataType():
     #Set default values for loops
-    tool = "Invalid option!"
-    correct = 2
-    while True:
-        if tool != "Invalid option!":
-            break
-        if correct != 2:
-            break
-        print("\nPlease type the number of the desired tool: \n1) Create all student data csv file\n2) Sort student data into individual building")
-        #Take user input
-        selectedTool = int(input())
+    valid = False
+    while valid == False:
+        selectedTool = int(input("\nPlease type the number of the desired tool: \n1) Create all student data csv file\n2) Sort student data into individual building\n"))
         #Assign returned data from studentToolSwitch function to a variable
         tool = studentToolSwitch(selectedTool)
-        print(tool)
-        print("\nIs this correct:\n1) Yes\n2) No")
+        correct = input(str(tool) + "\nIs this correct: (y/n) ").lower()
         #Take user input
-        correct = int(input())
-        if correct == 2:
+        if correct == 'y':
             #Set tool value back to Invalid option so that loop restarts
-            tool = "Invalid option!"
+            valid = True
     return(selectedTool)
 
 def studentDataTool(argument):
@@ -107,11 +88,7 @@ def studentDataTool(argument):
         os.system("gam print users allfields query orgUnitPath=/Students > needed_file/full_student.csv")
     elif argument == 2:
         #set user_script.sh to executable
-        os.chmod('scripts/user_script.sh', 0o755)
-        #Run user_script.sh
-        subprocess.call("scripts/user_script.sh")
-        #Revert permissions on user_script.sh once done
-        os.chmod('scripts/user_script.sh', 0o644)
+        os.system('python3 scripts/user_script.py')
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
@@ -133,25 +110,17 @@ def studentToolSwitch(argument):
 
 def cartDataType():
     #Set default values for while loops
-    tool = "Invalid option!"
+    valid = False
     correct = 2
     #Create loop
-    while True:
-        if tool != "Invalid option!":
-            break
-        if correct != 2:
-            break
-        print("\nPlease type the number of the desired tool: \n1) Compile cart/OU device data csv file\n2) Compile deprovisioned Units csv file")
-        #Take user input
-        selectedTool = int(input())
+    while valid == False:
+        selectedTool = int(input("\nPlease type the number of the desired tool: \n1) Compile cart/OU device data csv file\n2) Compile deprovisioned Units csv file\n"))
         tool = cartToolSwitch(selectedTool)
-        print(tool)
-        print("\nIs this correct:\n1) Yes\n2) No")
+        correct = input(str(tool) + "\nIs this correct: (y/n) ").lower()
         #Take user input
-        correct = int(input())
-        if correct == 2:
+        if correct == 'y':
             #Set tool value back to Invalid option so that loop restarts
-            tool = "Invalid option!"
+            valid = True
     #Return tool user chose
     return(selectedTool)
 
@@ -159,20 +128,11 @@ def cartDataTool(argument):
     #Run script depending on user choices passed as argument
     if argument == 1:
         #Change cart_script.sh to executable
-        os.chmod('scripts/cart_script.sh', 0o755)
-        #Run cart_script.sh
-        subprocess.call("scripts/cart_script.sh")
-        #Revert permission on cart_script.sh
-        os.chmod('scripts/cart_script.sh', 0o644)
+        os.system('python3 scripts/cart_script.py')
     elif argument == 2:
         #Query GAM for deprovisioned devices
-        os.system("gam print cros allfields query 'status:deprovisioned' > needed_file/deprovisioned_full.csv")
-        #Change deprovisioned_units.sh to executable
-        os.chmod('scripts/deprovisioned_units.sh', 0o755)
-        #Run deprovisioned_units.sh script
-        subprocess.call("scripts/deprovisioned_units.sh")
-        #Revert permission on deprovisioned_units.sh script
-        os.chmod('scripts/deprovisioned_units.sh', 0o644)
+        os.system("gam print cros full query 'status:deprovisioned' > needed_file/deprovisioned_full.csv")
+        os.system('python3 scripts/deprovisioned_unit.py')
     else:
         print("Unknown Error! Pulling the plug!")
         time.sleep(3)
@@ -192,11 +152,8 @@ def cartToolSwitch(argument):
 
 def hotspotDataTool():
     #Change hotspot_script.sh script to executable
-    os.chmod('scripts/hotspot_script.sh', 0o755)
-    #Run hotspot_script.sh script
-    subprocess.call("scripts/hotspot_script.sh")
+    os.system('python3 scripts/hotspot_script.py')
     #Revert permission of hotspot_script.sh script
-    os.chmod('scripts/hotspot_script.sh', 0o644)
 
 def dataSwitch(argument):
     #Create python switch
