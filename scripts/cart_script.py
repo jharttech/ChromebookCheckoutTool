@@ -15,7 +15,6 @@ def main():
     print("Requested data and files have been created.  Thank you!")
     exit()
 
-
 def getBuilding():
     valid = False
     while not valid:
@@ -82,7 +81,6 @@ def getWantedData():
         else:
             print("Error: No lines added.  Bailing out now!")
             exit()
-
 
 def getCart(building):
     tempCart = []
