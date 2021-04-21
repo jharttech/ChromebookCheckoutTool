@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from sys import argv, exit
 import csv
 import os
@@ -128,6 +129,7 @@ def cartDataTool(argument):
     #Run script depending on user choices passed as argument
     if argument == 1:
         #Change cart_script.sh to executable
+        os.system("gam print cros full query 'status:provisioned' > needed_file/full.csv")
         os.system('python3 scripts/cart_script.py')
     elif argument == 2:
         #Query GAM for deprovisioned devices
