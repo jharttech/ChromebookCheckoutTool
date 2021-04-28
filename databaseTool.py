@@ -6,7 +6,7 @@ from mysql.connector import Error
 check = len(argv)
 
 if check != 2:
-    print("Usage: python ./deprovision.py 'cvsFile.csv'")
+    print("Usage: python ./databaseTool.py 'cvsFile.csv'")
     exit(1)
 filename = str(argv[1])
 
