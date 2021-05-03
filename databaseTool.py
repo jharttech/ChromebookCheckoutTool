@@ -77,7 +77,6 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
     divider = ['###################']
     errorFile = 'carts/errorLog.csv'
     logFile = 'carts/movingOU_logs.csv'
-    dLogFile = 'carts/deprovisioned_logs.csv'
     with open(file, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         nCol = len(next(csv_reader))
