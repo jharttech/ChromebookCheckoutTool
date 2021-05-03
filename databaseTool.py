@@ -23,8 +23,7 @@ def main():
         ouToLocale = returnDicts[1]
         #print(localeToOU)
         #print(ouToLocale)
-        if tool == 'updateLocale':
-            lookForMovedLocales(localeToOU, ouToLocale, db, filename)
+        lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool)
         db.close()
     else:
         print("Error connecting to database:")
@@ -65,7 +64,7 @@ def getDBTool():
         tool = int(input("Which Database action would you like to take?\n1) Update Chromebook Org Unit Locations\n2) Update Deprovisioned Chromebooks\n3) EXIT\n"))
         return(toolDict.get(tool))
 
-def lookForMovedLocales(localeToOU, ouToLocale, db, filename):
+def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
     file = filename
     line_count = 0
     assetTag = None
@@ -74,6 +73,7 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename):
     divider = ['###################']
     errorFile = 'carts/errorLog.csv'
     logFile = 'carts/movingOU_logs.csv'
+    dLogFile = 'carts/deprovisioned_logs.csv'
     with open(file, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         nCol = len(next(csv_reader))
@@ -107,7 +107,7 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename):
                         errors.writerow(tempLine)
                 elif originalLocaleNum != convertedOU:
                     moved += 1
-                    updateDB(filename, db, realAssetTag, convertedOU)
+                    updateDB(filename, db, realAssetTag, convertedOU, tool)
                     timestamp = datetime.datetime.now()
                     tempMoveLine = (timestamp, "Unit " + realAssetTag + " was moved from " + originalOU + " to " + realOU)
                     subprocess.call(['touch', logFile])
@@ -130,10 +130,13 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename):
         print(str(moved) + " units were moved.")
         print("All done moving chromebooks to new locations in snipe database. Thank you!")
 
-def updateDB(filename, db, asset, rtd_location):
+def updateDB(filename, db, asset, rtd_location, tool):
     cursor = db.cursor()
     try:
-        cursor.execute("UPDATE assets SET rtd_location_id=%s WHERE asset_tag=%s",(rtd_location, asset))
+        if tool == 'updateLocale':
+            cursor.execute("UPDATE assets SET rtd_location_id=%s WHERE asset_tag=%s",(rtd_location, asset))
+        elif tool == 'updateDeprovisioned':
+            cursor.execute("UPDATE assets SET rtd_location_id=%s, location_id=%s, _snipeit_orgunitpath_4=%s WHERE asset_tag=%s",(rtd_location, rtd_location, "DEPROVISIONED", asset))
         db.commit()
         cursor.close()
     except Error as e:
