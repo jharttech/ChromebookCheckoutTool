@@ -12,22 +12,25 @@ def main():
         print("Usage: python ./databaseTool.py 'cvsFile.csv'")
         exit(1)
     filename = str(argv[1])
-
-    tool = getDBTool()
-    connected = connectToDB()
-    if connected[0] == True:
-        db = connected[1]
-        print("Connected to Database!")
-        returnDicts = getDBLocationData(db)
-        localeToOU = returnDicts[0]
-        ouToLocale = returnDicts[1]
-        #print(localeToOU)
-        #print(ouToLocale)
-        lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool)
-        db.close()
-    else:
-        print("Error connecting to database:")
-        print(connectToDB())
+    tool = None
+    while tool != 'EXIT':
+        tool = getDBTool()
+        if tool == "EXIT":
+            exit(1)
+        connected = connectToDB()
+        if connected[0] == True:
+            db = connected[1]
+            print("Connected to Database!")
+            returnDicts = getDBLocationData(db)
+            localeToOU = returnDicts[0]
+            ouToLocale = returnDicts[1]
+            #print(localeToOU)
+            #print(ouToLocale)
+            lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool)
+            db.close()
+        else:
+            print("Error connecting to database:")
+            print(connectToDB())
 
 def connectToDB():
     try:
@@ -61,7 +64,7 @@ def getDBTool():
     tool = None
     toolDict = {1 : "updateLocale", 2 : "updateDeprovisioned", 3 : "EXIT"}
     while tool not in [1,2,3]:
-        tool = int(input("Which Database action would you like to take?\n1) Update Chromebook Org Unit Locations\n2) Update Deprovisioned Chromebooks\n3) EXIT\n"))
+        tool = int(input("\nWhich Database action would you like to take?\n1) Update Chromebook Org Unit Locations\n2) Update Deprovisioned Chromebooks\n3) EXIT\n"))
         return(toolDict.get(tool))
 
 def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
