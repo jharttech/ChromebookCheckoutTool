@@ -17,20 +17,21 @@ def main():
         tool = getDBTool()
         if tool == "EXIT":
             exit(1)
-        connected = connectToDB()
-        if connected[0] == True:
-            db = connected[1]
-            print("Connected to Database!")
-            returnDicts = getDBLocationData(db)
-            localeToOU = returnDicts[0]
-            ouToLocale = returnDicts[1]
-            #print(localeToOU)
-            #print(ouToLocale)
-            lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool)
-            db.close()
-        else:
-            print("Error connecting to database:")
-            print(connectToDB())
+        elif tool != None:
+            connected = connectToDB()
+            if connected[0] == True:
+                db = connected[1]
+                print("Connected to Database!")
+                returnDicts = getDBLocationData(db)
+                localeToOU = returnDicts[0]
+                ouToLocale = returnDicts[1]
+                #print(localeToOU)
+                #print(ouToLocale)
+                lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool)
+                db.close()
+            else:
+                print("Error connecting to database:")
+                print(connectToDB())
 
 def connectToDB():
     try:
