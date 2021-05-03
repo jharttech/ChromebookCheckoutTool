@@ -20,11 +20,11 @@ def main():
         print("Connected to Database!")
         returnDicts = getDBLocationData(db)
         localeToOU = returnDicts[0]
-        OUToLocale = returnDicts[1]
+        ouToLocale = returnDicts[1]
         #print(localeToOU)
-        #print(OUToLocale)
+        #print(ouToLocale)
         if tool == 'updateLocale':
-            lookForMovedLocales(localeToOU, OUToLocale, db, filename)
+            lookForMovedLocales(localeToOU, ouToLocale, db, filename)
         db.close()
     else:
         print("Error connecting to database:")
@@ -45,16 +45,16 @@ def connectToDB():
 
 def getDBLocationData(db):
     localeCodeToOUDict = {}
-    OUToLocaleCodeDict = {}
+    ouToLocaleCodeDict = {}
     cursor = db.cursor()
     cursor.execute("SELECT id, name FROM locations")
     records = cursor.fetchall()
     for row in records:
         localeCodeToOUDict.update({row[0] : row[1]})
-        OUToLocaleCodeDict.update({row[1] : row[0]})
-    if (len(localeCodeToOUDict) != 0) and (len(OUToLocaleCodeDict) != 0):
+        ouToLocaleCodeDict.update({row[1] : row[0]})
+    if (len(localeCodeToOUDict) != 0) and (len(ouToLocaleCodeDict) != 0):
         cursor.close()
-        return [localeCodeToOUDict, OUToLocaleCodeDict]
+        return [localeCodeToOUDict, ouToLocaleCodeDict]
     else:
         return "No Location Data Found!!"
 
@@ -65,7 +65,7 @@ def getDBTool():
         tool = int(input("Which Database action would you like to take?\n1) Update Chromebook Org Unit Locations\n2) Update Deprovisioned Chromebooks\n3) EXIT\n"))
         return(toolDict.get(tool))
 
-def lookForMovedLocales(localeToOU, OUToLocale, db, filename):
+def lookForMovedLocales(localeToOU, ouToLocale, db, filename):
     file = filename
     line_count = 0
     assetTag = None
@@ -90,7 +90,7 @@ def lookForMovedLocales(localeToOU, OUToLocale, db, filename):
             else:
                 realAssetTag = row[assetTagRow]
                 realOU = row[orgUnitRow]
-                convertedOU = OUToLocale.get(realOU)
+                convertedOU = ouToLocale.get(realOU)
                 #pause = input("stopping here: press enter when ready")
                 assetLocale = getDBAssetLocale(db)
                 originalLocaleNum = assetLocale.get(realAssetTag)
