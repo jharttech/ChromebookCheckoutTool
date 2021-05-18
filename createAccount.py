@@ -6,15 +6,27 @@ responseList = ['y','n']
 
 def main():
     os.system("clear")
-    leave = False
     print("Welcome to MG Create Account Tool\n")
-    while not leave:
-        chosenAccountType = choseTool()
-        if chosenAccountType == 'Staff':
-            organization = staffOU()
-            staffTool(organization)
-        elif chosenAccountType == 'Student':
-             organization = studentOU()
+    chosenAccountType = choseTool()
+    try:
+        while chosenAccountType != 'Exit':
+            if chosenAccountType == 'Staff':
+                organization = staffOU()
+                if organization[0] != 'Exit':
+                    staffTool(organization)
+                else:
+                    exit(1)
+            elif chosenAccountType == 'Student':
+                organization = studentOU()
+                if organization[0] != 'Exit':
+                    studentTool(organization)
+                else:
+                    exit(1)
+            elif chosenAccountType == 'Exit':
+                exit(1)
+    except:
+        print("An error has occured or you have chosen to Exit, sealing blast doors now!!")
+        exit(1)
 
 
 def choseTool():
@@ -52,12 +64,14 @@ def staffOU():
     allStaff = None
     classroom = None
     selectedOrgUnit = None
-    while selectedOrgUnit not in list(orgUnitDict.keys()):
+    while selectedOrgUnit not in list(orgUnitDict.keys()) and correctOU != 'y':
         [print(key,':',value) for key, value in orgUnitDict.items()]
         selectedOrgUnit = int(input("Please select the desired Org Unit: "))
         orgUnit = orgUnitDict.get(selectedOrgUnit)
-    while correctOU not in responseList:
-        correctOU = input("\nYou chose " + orgUnit + ", is this correct? (y/n): ").lower()
+        if orgUnit == 'Exit':
+            exit(1)
+        while correctOU not in responseList:
+            correctOU = input("\nYou chose " + orgUnit + ", is this correct? (y/n): ").lower()
     while staffPrint not in responseList:
         staffPrint = input("\nDoes the employee need to cloud print? (y/n): ").lower()
     while allStaff not in responseList:
@@ -76,43 +90,43 @@ def staffTool(argument):
     ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom@mg.k12.mo.us add user" $1}' staff.txt | sh"""
     staffFile = 'tempStaff.txt'
     os.system("vim " + staffFile)
-    if desiredOU == "Employees":
+    if desiredOU == "Exit":
+        exit(1)
+    elif desiredOU == "Employees":
         os.system("mv tempStaff.txt staff.txt")
-        COMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}' staff.txt"""
+        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}' staff.txt"""
         print("\n")
-        subprocess.call(COMMAND, shell=True)
+        subprocess.call(DRYCOMMAND, shell=True)
         valid = False
         dryRunGood = None
         while not valid:
             while dryRunGood not in responseList:
-                dryRunGood = input("\nDoes the command above look correct? (y/n): ").lower()
+                dryRunGood = input("\nDoes the DRYCOMMAND above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
                 break
             else:
                 valid = True
-                RUN = (COMMAND + " | sh")
+                RUN = (DRYCOMMAND + " | sh")
                 print(RUN)
                 subprocess.call(RUN, shell=True)
-    elif desiredOU == "Exit":
-        exit(1)
     else:
         os.system("rm staff.txt")
         INJECT = "sed -e 's/$/:" + desiredOU +"/' tempStaff.txt >> staff.txt"
-        COMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}' staff.txt"""
+        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}' staff.txt"""
         subprocess.call(INJECT)
         os.system("rm tempStaff.txt")
-        print("/n")
-        subprocess.call(COMMAND, shell=True)
+        print("\n")
+        subprocess.call(DRYCOMMAND, shell=True)
         valid = False
         dryRunGood = None
         while not valid:
             while dryRunGood not in responseList:
-                dryRunGood = input("\nDoes the command above look correct? (y/n): ").lower()
+                dryRunGood = input("\nDoes the DRYCOMMAND above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
                 break
             else:
                 valid = True
-                RUN = (COMMAND + " | sh")
+                RUN = (DRYCOMMAND + " | sh")
                 subprocess.call(RUN, shell=True)
     for x in range(len(argument)):
         if argument[x] == 'y':
@@ -125,6 +139,68 @@ def staffTool(argument):
             subprocess.call(whichGroup, shell=True)
 
 def studentOU():
+    stuOrgDict = {
+    1: "MGHS",
+    2: "MGMS",
+    3: "MGES",
+    4: "JDC",
+    5: "OMTC",
+    6: "ALC",
+    7: "Exit"
+    }
+    orgUnit = None
+    correctOU = None
+    selectedOrgUnit = None
+    while selectedOrgUnit not in list(stuOrgDict.keys()) and correctOU != 'y':
+        [print(key,':',value) for key, value in stuOrgDict.items()]
+        selectedOrgUnit = int(input("Please select the desired Org Unit: "))
+        orgUnit = stuOrgDict.get(selectedOrgUnit)
+        while correctOU not in responseList:
+            correctOU = input("\nYou chose " + orgUnit + ", is this correct? (y/n): ").lower()
+    return [orgUnit, selectedOrgUnit]
 
+def studentTool(argument):
+    desiredOU = argument[0]
+    studentFile = 'tempStudent.txt'
+    os.system("vim " + studentFile)
+    if desiredOU == 'ALC':
+        os.system("mv tempStudent.txt student.txt")
+        DRYCOMMANDALC = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/MGHS/"$5" && sleep 2"}' student.txt"""
+        print("\n")
+        subprocess.call(DRYCOMMANDALC, shell=True)
+        valid = False
+        dryRunGood = None
+        while not valid:
+            while dryRunGood not in responseList:
+                dryRunGood = input("\nDoes the dry run command above look correct? (y/n): ").lower()
+            if dryRunGood != 'y':
+                break
+            else:
+                valid = True
+                RUN = (DRYCOMMANDALC + " | sh")
+                print(RUN)
+                subprocess.call(RUN, shell=True)
+    else:
+        os.system('rm student.txt')
+        INJECT = "sed -e 's/$/:" + desiredOU + "/' tempStudent.txt >> student.txt"
+        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/"$5" && sleep 2"}' student.txt"""
+        subprocess.call(INJECT, shell=True)
+        os.system("rm tempStudent.txt")
+        print("\n")
+        subprocess.call(DRYCOMMAND, shell=True)
+        valid = False
+        dryRunGood = None
+        while not valid:
+            while dryRunGood not in responseList:
+                dryRunGood = input("\nDoes the dry run command above look correct? (y/n): ").lower()
+                if dryRunGood != 'y':
+                    break
+                else:
+                    try:
+                        RUN = (DRYCOMMAND + " | sh")
+                        subprocess.call(RUN, shell=True)
+                        valid = True
+                    except:
+                        print("The above error occured! Pulling ejection pin now!")
 
 main()
