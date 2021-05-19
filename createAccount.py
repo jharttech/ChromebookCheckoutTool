@@ -10,6 +10,7 @@ def main():
     chosenAccountType = choseTool()
     try:
         while chosenAccountType != 'Exit':
+            setup(chosenAccountType)
             if chosenAccountType == 'Staff':
                 organization = staffOU()
                 if organization[0] != 'Exit':
@@ -27,6 +28,12 @@ def main():
     except:
         print("An error has occured or you have chosen to Exit, sealing blast doors now!!")
         exit(1)
+
+def setup(argument):
+    if argument == "Student":
+        os.system("touch student.txt")
+    elif argument == "Staff":
+        os.system("touch staff.txt")
 
 
 def choseTool():
@@ -113,7 +120,7 @@ def staffTool(argument):
         os.system("rm staff.txt")
         INJECT = "sed -e 's/$/:" + desiredOU +"/' tempStaff.txt >> staff.txt"
         DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}' staff.txt"""
-        subprocess.call(INJECT)
+        subprocess.call(INJECT, shell= True)
         os.system("rm tempStaff.txt")
         print("\n")
         subprocess.call(DRYCOMMAND, shell=True)
