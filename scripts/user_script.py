@@ -36,7 +36,6 @@ def getWantedData():
                 headerRow = ['Email', 'First Name', 'Last Name', 'Location', 'Notes', 'Username']
                 lines.append(headerRow)
                 line_count += 1
-                print(headerToNum)
             else:
                 notes = 'Initial Import'
                 if row[headerToNum.get('primaryEmail')] != '':
@@ -89,7 +88,7 @@ def getBuilding():
     while not valid:
         buildingList = getBuildingNames()
         buildingList.append('ALL')
-        building = input("Please enter the building wanted (" + str(', '.join(buildingList)) + "): ")
+        building = input("Please enter the building of data wanted (" + str(', '.join(buildingList)) + "): ")
         building = building.upper()
         if building in buildingList:
             valid = True

@@ -72,7 +72,7 @@ def studentDataType():
     #Set default values for loops
     valid = False
     while valid == False:
-        selectedTool = int(input("\nPlease type the number of the desired tool: \n1) Create all student data csv file\n2) Sort student data into individual building\n"))
+        selectedTool = int(input("\nPlease type the number of the desired tool: \n1) Create all student data csv file\n2) Sort student data into individual building\n3) Escalate class to new building\n"))
         #Assign returned data from studentToolSwitch function to a variable
         tool = studentToolSwitch(selectedTool)
         correct = input(str(tool) + "\nIs this correct: (y/n) ").lower()
@@ -90,6 +90,26 @@ def studentDataTool(argument):
     elif argument == 2:
         #set user_script.sh to executable
         os.system('python3 scripts/user_script.py')
+    elif argument == 3:
+        START = 'python3 scripts/user_script.py'
+        subprocess.call(START, shell=True)
+        whichToEscalate = int(input("Do you want to escalate\n1) MS to HS\n2) ES to MS\n"))
+        year = input("Please enter the graduation year desired to escalate: ")
+        if whichToEscalate == 1:
+            buildingOld = 'MGMS'
+            buildingNew = 'MGHS'
+            file = 'students/MGMS.csv'
+            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > EscalateMS_To_HS.csv"
+            os.system(createFile)
+            COMMAND = "gam update org /Students/MGHS add file EscalateMS_To_HS.csv"
+            subprocess.call(COMMAND, shell=True)
+        elif whichToEscalate == 2:
+            buildingOld = 'MGES'
+            buildingNew = 'MGMS'
+            file = 'students/MGES.csv'
+            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > EscalateES_To_MS.csv"
+            os.system(createFile)
+            COMMAND = "gam update org /Students/MGMS add file EscalateES_To_MS.csv"
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
@@ -99,7 +119,8 @@ def studentToolSwitch(argument):
     #Create python switch
     switch = {
     1: "Create all student data csv file",
-    2: "Sort student data into individual building"
+    2: "Sort student data into individual building",
+    3: "Move Students to new building"
     }
     #Set default value so any option other than 1 and 2 returns Invalid options!
     desiredStudentTool = switch.get(argument, "Invalid option!")
