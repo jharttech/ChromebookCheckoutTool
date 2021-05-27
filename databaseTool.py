@@ -108,6 +108,14 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
                     with open(errorFile, mode='a') as error_file:
                         errors = csv.writer(error_file, delimiter=',')
                         errors.writerow(tempLine)
+                elif originalLocaleNum == None:
+                    errorCount += 1
+                    timestamp = datetime.datetime.now()
+                    tempLine = (timestamp, "Unit was never in Snipe DB", row)
+                    subprocess.call(['touch', errorFile])
+                    with open(errorFile, mode='a') as error_file:
+                        errors = csv.writer(error_file, delimiter=',')
+                        errors.writerow(tempLine)
                 elif originalLocaleNum != convertedOU:
                     moved += 1
                     updateDB(filename, db, realAssetTag, convertedOU, tool)
