@@ -99,7 +99,7 @@ def studentDataTool(argument):
             buildingOld = 'MGMS'
             buildingNew = 'MGHS'
             file = 'students/MGMS.csv'
-            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > EscalateMS_To_HS.csv"
+            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateMS_To_HS.csv"
             os.system(createFile)
             COMMAND = "gam update org /Students/MGHS add file EscalateMS_To_HS.csv"
             subprocess.call(COMMAND, shell=True)
@@ -107,7 +107,7 @@ def studentDataTool(argument):
             buildingOld = 'MGES'
             buildingNew = 'MGMS'
             file = 'students/MGES.csv'
-            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > EscalateES_To_MS.csv"
+            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateES_To_MS.csv"
             os.system(createFile)
             COMMAND = "gam update org /Students/MGMS add file EscalateES_To_MS.csv"
     else:
