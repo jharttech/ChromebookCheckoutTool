@@ -15,7 +15,7 @@ def getWantedData():
     tempRow = []
     num = None
     with open('needed_file/deprovisioned_full.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader((null.replace('\0', '') for null in csv_file), delimiter=',')
         nCol = len(next(csv_reader))
         csv_file.seek(0)
         line_count = 0
