@@ -13,13 +13,13 @@ def main():
             setup(chosenAccountType)
             if chosenAccountType == 'Staff':
                 organization = staffOU()
-                if organization[0] != 'Exit':
+                if organization[3] != 'Exit':
                     staffTool(organization)
                 else:
                     exit(1)
             elif chosenAccountType == 'Student':
                 organization = studentOU()
-                if organization[0] != 'Exit':
+                if organization[3] != 'Exit':
                     studentTool(organization)
                 else:
                     exit(1)
@@ -85,13 +85,13 @@ def staffOU():
         allStaff = input("\nDoes the employee need to be on all staff email list? (y/n)").lower()
     while classroom not in responseList:
         classroom = input("\nDoes the employee need to have their own Google Classroom? (y/n)").lower()
-    return[orgUnit, staffPrint, allStaff, classroom]
+    return[staffPrint, allStaff, classroom, orgUnit]
 
 def staffTool(argument):
-    desiredOU = argument[0]
-    staffPrint = argument[1]
-    allStaff = argument[2]
-    classroom = argument[3]
+    desiredOU = argument[3]
+    staffPrint = argument[0]
+    allStaff = argument[1]
+    classroom = argument[2]
     ADDTOPRINT = """awk -F: '{print "gam update group staffprint@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     ADDTOALLSTAFF = """awk -F: '{print "gam update group allstaff@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom@mg.k12.mo.us add user" $1}' staff.txt | sh"""
@@ -167,7 +167,7 @@ def studentOU():
     return [orgUnit, selectedOrgUnit]
 
 def studentTool(argument):
-    desiredOU = argument[0]
+    desiredOU = argument[3]
     studentFile = 'tempStudent.txt'
     os.system("vim " + studentFile)
     if desiredOU == 'ALC':
