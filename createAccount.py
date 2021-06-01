@@ -94,7 +94,7 @@ def staffTool(argument):
     classroom = argument[2]
     ADDTOPRINT = """awk -F: '{print "gam update group staffprint@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     ADDTOALLSTAFF = """awk -F: '{print "gam update group allstaff@mg.k12.mo.us add user "$1}' staff.txt | sh"""
-    ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom@mg.k12.mo.us add user" $1}' staff.txt | sh"""
+    ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom_teachers@mg.k12.mo.us add user" $1}' staff.txt | sh"""
     staffFile = 'tempStaff.txt'
     os.system("vim " + staffFile)
     if desiredOU == "Exit":
