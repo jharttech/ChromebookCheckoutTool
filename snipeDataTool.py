@@ -101,7 +101,7 @@ def studentDataTool(argument):
             file = 'students/MGMS.csv'
             createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateMS_To_HS.csv"
             os.system(createFile)
-            COMMAND = "gam update org /Students/MGHS add file EscalateMS_To_HS.csv"
+            COMMAND = "gam update org /Students/MGHS add file students/EscalateMS_To_HS.csv"
             subprocess.call(COMMAND, shell=True)
         elif whichToEscalate == 2:
             buildingOld = 'MGES'
@@ -109,7 +109,7 @@ def studentDataTool(argument):
             file = 'students/MGES.csv'
             createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateES_To_MS.csv"
             os.system(createFile)
-            COMMAND = "gam update org /Students/MGMS add file EscalateES_To_MS.csv"
+            COMMAND = "gam update org /Students/MGMS add file students/EscalateES_To_MS.csv"
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
