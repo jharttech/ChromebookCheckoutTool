@@ -94,7 +94,7 @@ def staffTool(argument):
     classroom = argument[2]
     ADDTOPRINT = """awk -F: '{print "gam update group staffprint@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     ADDTOALLSTAFF = """awk -F: '{print "gam update group allstaff@mg.k12.mo.us add user "$1}' staff.txt | sh"""
-    ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom_teachers@mg.k12.mo.us add user" $1}' staff.txt | sh"""
+    ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom_teachers@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     staffFile = 'tempStaff.txt'
     os.system("vim " + staffFile)
     if desiredOU == "Exit":
@@ -135,7 +135,7 @@ def staffTool(argument):
                 valid = True
                 RUN = (DRYCOMMAND + " | sh")
                 subprocess.call(RUN, shell=True)
-    for x in range(len(argument)):
+    for x in range(0,len(argument)):
         if argument[x] == 'y':
             switch = {
             0: ADDTOPRINT,
