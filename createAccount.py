@@ -8,6 +8,7 @@ def main():
     os.system("clear")
     print("Welcome to MG Create Account Tool\n")
     chosenAccountType = choseTool()
+    rerun = True
     try:
         while chosenAccountType != 'Exit':
             setup(chosenAccountType)
@@ -18,11 +19,12 @@ def main():
                 else:
                     exit(1)
             elif chosenAccountType == 'Student':
-                organization = studentOU()
-                if organization[0] != 'Exit':
-                    studentTool(organization)
-                else:
-                    exit(1)
+                while rerun == True:
+                    organization = studentOU()
+                    if organization[0] != 'Exit':
+                        rerun = studentTool(organization)
+                    else:
+                        exit(1)
             elif chosenAccountType == 'Exit':
                 exit(1)
     except:
@@ -110,7 +112,8 @@ def staffTool(argument):
             while dryRunGood not in responseList:
                 dryRunGood = input("\nDoes the DRYCOMMAND above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
-                break
+                rerun = True
+                return(rerun)
             else:
                 valid = True
                 RUN = (DRYCOMMAND + " | sh")
@@ -130,7 +133,8 @@ def staffTool(argument):
             while dryRunGood not in responseList:
                 dryRunGood = input("\nDoes the DRYCOMMAND above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
-                break
+                rerun = True
+                return(rerun)
             else:
                 valid = True
                 RUN = (DRYCOMMAND + " | sh")
@@ -181,7 +185,7 @@ def studentTool(argument):
             while dryRunGood not in responseList:
                 dryRunGood = input("\nDoes the dry run command above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
-                break
+                return(rerun)
             else:
                 valid = True
                 RUN = (DRYCOMMANDALC + " | sh")
@@ -201,7 +205,8 @@ def studentTool(argument):
             while dryRunGood not in responseList:
                 dryRunGood = input("\nDoes the dry run command above look correct? (y/n): ").lower()
                 if dryRunGood != 'y':
-                    break
+                    rerun = True
+                    return(rerun)
                 else:
                     try:
                         RUN = (DRYCOMMAND + " | sh")
