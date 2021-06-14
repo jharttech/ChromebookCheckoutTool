@@ -19,7 +19,8 @@ def main():
                     exit(1)
             elif chosenAccountType == 'Student':
                 organization = studentOU()
-                if organization[1] != 'Exit':
+                print(organization[0])
+                if organization[0] != 'Exit':
                     studentTool(organization)
                 else:
                     exit(1)
@@ -167,7 +168,7 @@ def studentOU():
     return [orgUnit, selectedOrgUnit]
 
 def studentTool(argument):
-    desiredOU = argument[3]
+    desiredOU = argument[0]
     studentFile = 'tempStudent.txt'
     os.system("vim " + studentFile)
     if desiredOU == 'ALC':
