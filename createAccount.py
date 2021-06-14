@@ -185,6 +185,7 @@ def studentTool(argument):
             while dryRunGood not in responseList:
                 dryRunGood = input("\nDoes the dry run command above look correct? (y/n): ").lower()
             if dryRunGood != 'y':
+                rerun = True
                 return(rerun)
             else:
                 valid = True
