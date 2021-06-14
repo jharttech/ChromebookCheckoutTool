@@ -19,7 +19,7 @@ def main():
                     exit(1)
             elif chosenAccountType == 'Student':
                 organization = studentOU()
-                if organization[3] != 'Exit':
+                if organization[0] != 'Exit':
                     studentTool(organization)
                 else:
                     exit(1)
