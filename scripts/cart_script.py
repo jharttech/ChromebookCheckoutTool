@@ -89,7 +89,8 @@ def getCart(building):
     cart = input("Please enter the cart name desired, or enter 'ALL' for all carts in " + building + ": ")
     cartUp = cart.upper()
     if cartUp != 'ALL':
-        subprocess.call("mkdir carts/single")
+        COMMAND = "mkdir carts/single"
+        subprocess.call(COMMAND, shell=True)
         with open('needed_file/cartFull.csv', mode='r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
