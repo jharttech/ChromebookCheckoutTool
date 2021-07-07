@@ -9,7 +9,7 @@ def main():
     check = len(argv)
 
     if check != 2:
-        print("Usage: python ./userDatabaseTool.py 'cvsFile.csv'")
+        print("Usage: python ./db_move_user.py 'cvsFile.csv'")
         exit(1)
     filename = str(argv[1])
     tool = None

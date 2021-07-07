@@ -9,7 +9,7 @@ def main():
     check = len(argv)
 
     if check != 2:
-        print("Usage: python ./databaseTool.py 'cvsFile.csv'")
+        print("Usage: python ./db_update_asset.py 'cvsFile.csv'")
         exit(1)
     filename = str(argv[1])
     tool = None
