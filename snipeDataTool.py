@@ -86,7 +86,9 @@ def studentDataTool(argument):
     #Run command or script based on user response passed as argument
     if argument == 1:
         #query GAM for needed information and write it to full_student.csv file in needed_file directory
-        os.system("gam print users allfields query orgUnitPath=/Students > needed_file/full_student.csv")
+        GAMCOMMAND = "gam print users allfields query orgUnitPath=/Students > needed_file/full_student.csv"
+        subprocess.call(GAMCOMMAND, shell=True)
+        os.system('python3 scripts/user_script.py')
     elif argument == 2:
         #set user_script.sh to executable
         os.system('python3 scripts/user_script.py')
