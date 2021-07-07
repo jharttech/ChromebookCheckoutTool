@@ -26,6 +26,9 @@ def main():
             studentDataTool(chosenTool)
         elif chosenData == 2:
             #Set variable for debug sake, otherwise run function
+            print("Now going to collect all cart data from GAM to ensure newest devices are listed.")
+            time.sleep(3)
+            os.system("gam print cros full query 'status:provisioned' > needed_file/full.csv")
             chosenTool = cartDataType()
             #print(chosenTool) UNCOMMENT FOR DEGUB INFO
             cartDataTool(chosenTool)
@@ -152,7 +155,6 @@ def cartDataTool(argument):
     #Run script depending on user choices passed as argument
     if argument == 1:
         #Change cart_script.sh to executable
-        os.system("gam print cros full query 'status:provisioned' > needed_file/full.csv")
         os.system('python3 scripts/cart_script.py')
     elif argument == 2:
         #Query GAM for deprovisioned devices
