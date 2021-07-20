@@ -13,7 +13,7 @@ def main():
         file = 'needed_file/staffFull.csv'
         dest = 'staff/staffFull.csv'
         subprocess.call(['mv',file,dest])
-        print("All student data has been compiled into ..ChromebookCheckoutTool/staff/staffFull.csv")
+        print("All staff data has been compiled into ..ChromebookCheckoutTool/staff/staffFull.csv")
         exit()
     elif accountType == "student":
         building = getBuilding()
