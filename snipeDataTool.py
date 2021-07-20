@@ -184,7 +184,7 @@ def hotspotDataTool():
     os.system('python3 scripts/hotspot_script.py')
     #Revert permission of hotspot_script.sh script
 
-def staffDataToo():
+def staffDataTool():
     os.system("gam print users allfields query orgUnitPath=/Employees > needed_file/full_staff.csv")
 
 def dataSwitch(argument):
