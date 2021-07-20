@@ -186,6 +186,7 @@ def hotspotDataTool():
 
 def staffDataTool():
     os.system("gam print users allfields query orgUnitPath=/Employees > needed_file/full_staff.csv")
+    os.system('python3 scripts/user_script.py')
 
 def dataSwitch(argument):
     #Create python switch
