@@ -34,6 +34,8 @@ def main():
             cartDataTool(chosenTool)
         elif chosenData == 3:
             hotspotDataTool()
+        elif chosenData == 4:
+            staffDataTool()
         else:
             print("Unknown error, bailing out!")
             time.sleep(3)
@@ -48,7 +50,7 @@ def main():
 
 def setup():
     #Array of file names
-    directories = ["students", "carts", "hotspots"]
+    directories = ["students", "carts", "hotspots", "staff"]
     #Set FNULL varialbe to dev null
     FNULL = open(os.devnull, 'w')
     #start while loop for number of directories
@@ -62,7 +64,7 @@ def choseDataType():
     valid = False
     while valid == False:
         #Take user input
-        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) EXIT\n"))
+        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) Staff Data\n5) EXIT\n"))
         #Return value from dataSwitch function
         firstResponse = dataSwitch(dataType)
         correct = input(str(firstResponse) + "\nIs this correct: (y/n) ").lower()
@@ -182,15 +184,19 @@ def hotspotDataTool():
     os.system('python3 scripts/hotspot_script.py')
     #Revert permission of hotspot_script.sh script
 
+def staffDataToo():
+    os.system("gam print users allfields query orgUnitPath=/Employees > needed_file/full_staff.csv")
+
 def dataSwitch(argument):
     #Create python switch
     switch = {
     1: "Student Data",
     2: "Cart Data",
-    3: "Hotspot Data"
+    3: "Hotspot Data",
+    4: "Staff Data"
     }
     #Set option 4 as exit command
-    if argument == 4:
+    if argument == 5:
         exit()
     response = switch.get(argument, "Invalid option!")
     if response == "Invalid option!":
