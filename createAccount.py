@@ -55,6 +55,12 @@ def choseTool():
     return(response)
 
 def staffOU():
+    # GETOU = "gam print orgs"
+    # listOU = list(subprocess.call(GETOU, shell=True))
+    # for x in range(0,len(listOU)):
+    #     orgUnitDict.update({x + 1 : listOU[x]})
+    # orgUnitDict.update({int(len(listOU)) : "Exit"})
+    #Above code needs implimented once on campus
     orgUnitDict = {
     1: "Employees",
     2: "Admins",
