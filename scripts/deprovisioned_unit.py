@@ -34,9 +34,9 @@ def getWantedData():
                 location = "DEPROVISIONED"
                 category = 'Chromebook'
                 if row[headerToNum.get('autoUpdateExpiration', "Error getting header number!")] != '':
-                    updateExp = datetime.datetime.fromtimestamp(float(row[headerToNum.get('autoUpdateExpiration')])/1000.0)
-                    updateExp = updateExp.strftime('%Y-%m-%d')
-                else:
+                    #updateExp = datetime.datetime.fromtimestamp(float(row[headerToNum.get('autoUpdateExpiration')])/1000.0)
+                    #updateExp = updateExp.strftime('%Y-%m-%d')
+                #else:
                     updateExp = row[headerToNum.get('autoUpdateExpiration', 'Error getting header number!')]
                 assetTag = row[headerToNum.get('serialNumber')]
                 if len(assetTag) > 14:

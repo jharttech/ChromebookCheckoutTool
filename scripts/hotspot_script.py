@@ -64,6 +64,8 @@ def createHotspotEntry(info):
                     'Purchase Date', 'Purchase Cost', 'Order Number',
                     'Asset Tag', 'Serial Number', 'Sim Card Number']
     file = ('hotspots/' + str(info.get('isoDate') + "-PO" + info.get('poNumber') + "-hotspots.csv"))
+    template = ('needed_file/hotspot_template.csv')
+    CopyTemplate = ('cat ' + template + ' > ' + file)
     errorFile = 'hotspots/errorLog.csv'
     masterFile = 'hotspots/hotspot_master_list.csv'
     subprocess.call(['touch',masterFile])
@@ -80,6 +82,7 @@ def createHotspotEntry(info):
             if response == 'y':
                 valid = True
                 subprocess.call(['touch',file])
+                subprocess.call(CopyTemplate, shell=True)
                 with open(masterFile, mode='r') as csv_file:
                     csv_reader = csv.reader(csv_file, delimiter=',')
                     for row in csv_reader:
