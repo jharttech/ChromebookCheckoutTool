@@ -13,6 +13,13 @@ def main():
         exit(1)
     filename = str(argv[1])
     tool = None
+    dbBackedUp = None
+    while dbBackedUp not in ['y','Y','n','N']:
+        dbBackedUp = input("Have you backed up your database? (y/n)\n")
+        if dbBackedUp == 'n' or dbBackedUp == 'N':
+            exit(1)
+        else:
+            continue
     while tool != 'EXIT':
         tool = getDBTool()
         if tool == "EXIT":
