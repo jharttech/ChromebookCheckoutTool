@@ -125,7 +125,7 @@ def createHotspotEntry(info):
             for i in range(0,len(lines)):
                 hotspotMaster = csv.writer(hotspot_file, delimiter=',')
                 hotspotMaster.writerow(lines[i])
-        with open(file, mode='w') as hotspotCsv:
+        with open(file, mode='a') as hotspotCsv:
             for z in range(0,len(lines)):
                 hotspotCSV = csv.writer(hotspotCsv, delimiter=',')
                 hotspotCSV.writerow(lines[z])
