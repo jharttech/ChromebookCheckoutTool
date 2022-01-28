@@ -8,7 +8,8 @@ def main():
     if building == 'ALL':
         file = 'needed_file/cartFull.csv'
         dest = 'carts/cartFull.csv'
-        subprocess.call(['mv',file,dest])
+        moveFile = subprocess.Popen(["mv",file,dest])
+        moveFile.communicate()
         print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
         exit()
     cart = getCart(building)
@@ -57,9 +58,9 @@ def getWantedData():
                 notes = 'Initial Import'
                 category = 'Chromebook'
                 if row[headerToNum.get('autoUpdateExpiration', "Error getting header number!")] != '':
-                    updateExp = datetime.datetime.fromtimestamp(float(row[headerToNum.get('autoUpdateExpiration')])/1000.0)
-                    updateExp = updateExp.strftime('%Y-%m-%d')
-                else:
+                    #updateExp = datetime.datetime.fromtimestamp(float(row[headerToNum.get('autoUpdateExpiration')])/1000.0)
+                    #updateExp = updateExp.strftime('%Y-%m-%d')
+                #else:
                     updateExp = row[headerToNum.get('autoUpdateExpiration', "Error getting header number!")]
                 assetTag = row[headerToNum.get('serialNumber')]
                 if len(assetTag) > 14:
@@ -89,8 +90,8 @@ def getCart(building):
     cart = input("Please enter the cart name desired, or enter 'ALL' for all carts in " + building + ": ")
     cartUp = cart.upper()
     if cartUp != 'ALL':
-        COMMAND = "mkdir carts/single"
-        subprocess.call(COMMAND, shell=True)
+        result1 = subprocess.Popen(["mkdir","carts/single"])
+        result1.communicate()
         with open('needed_file/cartFull.csv', mode='r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
@@ -119,8 +120,9 @@ def getCart(building):
         listOfCarts = getNumOfCarts(building)
         newDir = building
         num = None
-        newDirLocal = 'carts/'
-        subprocess.call(['mkdir',newDirLocal + newDir])
+        newDirLocal = ('carts/' + newDir)
+        result1 = subprocess.Popen(["mkdir",newDirLocal])
+        result1.communicate()
         for b in range(0,len(listOfCarts)):
             with open('needed_file/cartFull.csv', mode='r') as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
