@@ -12,7 +12,8 @@ def main():
     if accountType == "staff":
         file = 'needed_file/staffFull.csv'
         dest = 'staff/staffFull.csv'
-        subprocess.call(['mv',file,dest])
+        moveFile = subprocess.Popen(["mv",file,dest])
+        moveFile.communicate()
         print("All staff data has been compiled into ..ChromebookCheckoutTool/staff/staffFull.csv")
         exit()
     elif accountType == "student":
@@ -20,7 +21,8 @@ def main():
         if building == 'ALL':
             file = 'needed_file/studentFull.csv'
             dest = 'students/studentFull.csv'
-            subprocess.call(['mv',file,dest])
+            moveFile = subprocess.Popen(["mv",file,dest])
+            moveFile.communicate()
             print("All student data has been compiled into ..ChromebookCheckoutTool/students/studentFull.csv")
             exit()
         else:
