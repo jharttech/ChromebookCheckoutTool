@@ -62,6 +62,6 @@ def getWantedData():
 
 def setup():
     dir = 'carts/deprovisioned'
-    subprocess.call(['mkdir',dir])
-
+    makeDir = subpocess.Popen(["mkdir",dir])
+    makeDir.communicate()
 main()
