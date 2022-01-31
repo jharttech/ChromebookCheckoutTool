@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+import shutil
 
 responseList = ['y','n']
 
@@ -31,9 +32,11 @@ def main():
 
 def setup(argument):
     if argument == "Student":
-        os.system("touch student.txt")
+        touchStuFile = subprocess.Popen(["touch","student.txt"])
+        touchStuFile.communicate()
     elif argument == "Staff":
-        os.system("touch staff.txt")
+        touchStaffFile = subprocess.Popen(["touch","staff.txt"])
+        touchStaffFile.communicate()
 
 
 def choseTool():
@@ -102,14 +105,18 @@ def staffTool(argument):
     ADDTOALLSTAFF = """awk -F: '{print "gam update group allstaff@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom_teachers@mg.k12.mo.us add user "$1}' staff.txt | sh"""
     staffFile = 'tempStaff.txt'
-    os.system("vim " + staffFile)
+    editStaffFile = subprocess.Popen(["vim",staffFile])
+    editStaffFile.communicate()
     if desiredOU == "Exit":
         exit(1)
     elif desiredOU == "Employees":
-        os.system("mv tempStaff.txt staff.txt")
-        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}' staff.txt"""
+        moveTempToStaff = subprocess.Popen(["mv","tempStaff.txt","staff.txt"])
+        moveTempToStaff.communicate()
+        DRYCOMMAND = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}'
+        awkFile = "staff.txt"
         print("\n")
-        subprocess.call(DRYCOMMAND, shell=True)
+        dryRun = subprocess.Popen(["awk","-F:",DRYCOMMAND,awkFile])
+        dryRun.communicate()
         valid = False
         dryRunGood = None
         while not valid:
@@ -119,17 +126,24 @@ def staffTool(argument):
                 return()
             else:
                 valid = True
-                RUN = (DRYCOMMAND + " | sh")
-                print(RUN)
-                subprocess.call(RUN, shell=True)
+                awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}'
+                RUN1 = subprocess.Popen(["awk","-F:",awkPrint,awkFile], stdout=subprocess.PIPE)
+                RUN2 = subprocess.Popen(["sh"], stdin=RUN1.stdout)
+                RUN2.communicate()
     else:
-        os.system("rm staff.txt")
-        INJECT = "sed -e 's/$/:" + desiredOU +"/' tempStaff.txt >> staff.txt"
-        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}' staff.txt"""
-        subprocess.call(INJECT, shell= True)
-        os.system("rm tempStaff.txt")
+        input("Pause one")
+        removeStaffFile = subprocess.Popen(["rm","staff.txt"])
+        removeStaffFile.communicate()
+        SEDPARAMETERS = "s/$/:" + desiredOU + "/"
+        with open("staff.txt", 'w') as file:
+            subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStaff.txt"], stdout=file)
+        awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}'
+        awkFile = "staff.txt"
+        dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
+        removeTempStaff = subprocess.Popen(["rm","tempStaff.txt"])
+        removeTempStaff.communicate()
         print("\n")
-        subprocess.call(DRYCOMMAND, shell=True)
+        dryRun.communicate()
         valid = False
         dryRunGood = None
         while not valid:
@@ -139,8 +153,9 @@ def staffTool(argument):
                 return()
             else:
                 valid = True
-                RUN = (DRYCOMMAND + " | sh")
-                subprocess.call(RUN, shell=True)
+                RUN1 = subprocess.Popen(["awk","-F:",awkPrint,awkFile], stdout=subprocess.PIPE)
+                RUN2 = subprocess.Popen(["sh"], stdin=RUN1.stdout)
+                RUN2.communicate()
     for x in range(0,len(argument)):
         if argument[x] == 'y':
             switch = {
@@ -175,12 +190,16 @@ def studentOU():
 def studentTool(argument):
     desiredOU = argument[0]
     studentFile = 'tempStudent.txt'
-    os.system("vim " + studentFile)
+    editStuFile = subprocess.Popen(["vim",studentFile])
+    editStuFile.communicate()
     if desiredOU == 'ALC':
-        os.system("mv tempStudent.txt student.txt")
-        DRYCOMMANDALC = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/MGHS/"$5" && sleep 2"}' student.txt"""
+        mvTempToStu = subprocess.Popen(["mv",studentFile,"student.txt"])
+        mvTempToStu.communicate()
+        awkPrintALC = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/MGHS/"$5" && sleep 2"}'
+        awkFile = "student.txt"
         print("\n")
-        subprocess.call(DRYCOMMANDALC, shell=True)
+        dryRun  = subprocess.Popen(["awk","-F:",awkPrintALC,awkFile])
+        dryRun.communicate()
         valid = False
         dryRunGood = None
         while not valid:
@@ -191,17 +210,21 @@ def studentTool(argument):
                 return(rerun)
             else:
                 valid = True
-                RUN = (DRYCOMMANDALC + " | sh")
-                print(RUN)
-                subprocess.call(RUN, shell=True)
+                RUN = subprocess.Popen(["awl","-F:",awkPrint,awkFile],stdout=subprocess.PIPE)
+                RUN2 = subprocess.Popen(["sh"],stdin=RUN.stdout)
+                RUN2.communicate()
     else:
-        os.system('rm student.txt')
-        INJECT = "sed -e 's/$/:" + desiredOU + "/' tempStudent.txt >> student.txt"
-        DRYCOMMAND = """awk -F: '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/"$5" && sleep 2"}' student.txt"""
-        subprocess.call(INJECT, shell=True)
-        os.system("rm tempStudent.txt")
+        removeStuFile = subprocess.Popen(["rm","student.txt"])
+        removeStuFile.communicate()
+        SEDPARAMETERS = "s/$/:" + desiredOU + "/"
+        with open("student.txt", 'w') as file:
+            INJECT = subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStudent.txt"], stdout=file)
+        awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/"$5" && sleep 2"}'
+        awkFile = "student.txt"
+        dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
+        removeStuTempFile = subprocess.Popen(["rm","tempStudent.txt"])
+        removeStuTempFile.communicate()
         print("\n")
-        subprocess.call(DRYCOMMAND, shell=True)
         valid = False
         dryRunGood = None
         while not valid:
@@ -212,8 +235,9 @@ def studentTool(argument):
                     return(rerun)
                 else:
                     try:
-                        RUN = (DRYCOMMAND + " | sh")
-                        subprocess.call(RUN, shell=True)
+                        RUN = subprocess.Popen(["awk","-F:", awkPrint,awkFile],stdout=subprocess.PIPE)
+                        RUN2 = subprocess.Popen(["sh"],stdin=RUN.stdout)
+                        RUN2.communicate()
                         valid = True
                     except:
                         print("The above error occured! Pulling ejection pin now!")
