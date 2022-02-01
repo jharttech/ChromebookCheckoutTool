@@ -101,9 +101,7 @@ def staffTool(argument):
     staffPrint = argument[0]
     allStaff = argument[1]
     classroom = argument[2]
-    ADDTOPRINT = """awk -F: '{print "gam update group staffprint@mg.k12.mo.us add user "$1}' staff.txt | sh"""
-    ADDTOALLSTAFF = """awk -F: '{print "gam update group allstaff@mg.k12.mo.us add user "$1}' staff.txt | sh"""
-    ADDTOCLASSROOM = """awk -F: '{print "gam update group classroom_teachers@mg.k12.mo.us add user "$1}' staff.txt | sh"""
+    awkFile = "staff.txt"
     staffFile = 'tempStaff.txt'
     editStaffFile = subprocess.Popen(["vim",staffFile])
     editStaffFile.communicate()
@@ -113,7 +111,6 @@ def staffTool(argument):
         moveTempToStaff = subprocess.Popen(["mv","tempStaff.txt","staff.txt"])
         moveTempToStaff.communicate()
         DRYCOMMAND = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees && sleep 2"}'
-        awkFile = "staff.txt"
         print("\n")
         dryRun = subprocess.Popen(["awk","-F:",DRYCOMMAND,awkFile])
         dryRun.communicate()
@@ -131,14 +128,12 @@ def staffTool(argument):
                 RUN2 = subprocess.Popen(["sh"], stdin=RUN1.stdout)
                 RUN2.communicate()
     else:
-        input("Pause one")
         removeStaffFile = subprocess.Popen(["rm","staff.txt"])
         removeStaffFile.communicate()
         SEDPARAMETERS = "s/$/:" + desiredOU + "/"
         with open("staff.txt", 'w') as file:
             subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStaff.txt"], stdout=file)
         awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}'
-        awkFile = "staff.txt"
         dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
         removeTempStaff = subprocess.Popen(["rm","tempStaff.txt"])
         removeTempStaff.communicate()
@@ -159,12 +154,15 @@ def staffTool(argument):
     for x in range(0,len(argument)):
         if argument[x] == 'y':
             switch = {
-            0: ADDTOPRINT,
-            1: ADDTOALLSTAFF,
-            2: ADDTOCLASSROOM
+            0: 'staffprint',
+            1: 'allstaff',
+            2: 'classroom_teachers'
             }
             whichGroup = switch.get(x, "ERROR!!!")
-            subprocess.call(whichGroup, shell=True)
+            ADDGROUPCOMMAND = '{print "gam update group '+whichGroup+'@mg.k12.mo.us add user "$1}'
+            ADDGROUP1 = subprocess.Popen(["awk","-F:",ADDGROUPCOMMAND,awkFile], stdout=subprocess.PIPE)
+            ADDGROUP2 = subprocess.Popen(["sh"], stdin=ADDGROUP1.stdout)
+            ADDGROUP2.communicate()
 
 def studentOU():
     stuOrgDict = {
