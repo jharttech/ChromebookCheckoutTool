@@ -111,7 +111,8 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
                     errorCount += 1
                     timestamp = datetime.datetime.now()
                     tempLine = (timestamp, "ORG UNIT ERROR", row)
-                    subprocess.call(['touch', errorFile])
+                    makeErrorFile = subprocess.Popen("touch",errorFile)
+                    makeErrorFile.communicate()
                     with open(errorFile, mode='a') as error_file:
                         errors = csv.writer(error_file, delimiter=',')
                         errors.writerow(tempLine)
@@ -119,7 +120,8 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
                     errorCount += 1
                     timestamp = datetime.datetime.now()
                     tempLine = (timestamp, "Unit was never in Snipe DB", row)
-                    subprocess.call(['touch', errorFile])
+                    makeErrorFile = subprocess.Popen("touch",errorFile)
+                    makeErrorFile.communicate()
                     with open(errorFile, mode='a') as error_file:
                         errors = csv.writer(error_file, delimiter=',')
                         errors.writerow(tempLine)
@@ -128,7 +130,8 @@ def lookForMovedLocales(localeToOU, ouToLocale, db, filename, tool):
                     updateDB(filename, db, realAssetTag, convertedOU, tool)
                     timestamp = datetime.datetime.now()
                     tempMoveLine = (timestamp, "Unit " + realAssetTag + " was moved from " + originalOU + " to " + realOU)
-                    subprocess.call(['touch', logFile])
+                    makeLogFile = subprocess.Popen(["touch",logFile])
+                    makeLogFile.communicate()
                     with open(logFile, mode='a') as log_file:
                         logs = csv.writer(log_file, delimiter=',')
                         logs.writerow(tempMoveLine)
