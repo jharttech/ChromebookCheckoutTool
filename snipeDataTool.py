@@ -28,7 +28,8 @@ def main():
             #Set variable for debug sake, otherwise run function
             print("Now going to collect all cart data from GAM to ensure newest devices are listed.")
             time.sleep(3)
-            os.system("gam print cros full query 'status:provisioned' > needed_file/full.csv")
+            with open("needed_file/full.csv") as file:
+                subprocess.Popen(["gam","print","cros","full","query","status:provisioned"], stdout=file)
             chosenTool = cartDataType()
             #print(chosenTool) UNCOMMENT FOR DEGUB INFO
             cartDataTool(chosenTool)
@@ -56,7 +57,7 @@ def setup():
     #start while loop for number of directories
     while len(directories):
         #Make each directory
-        subprocess.call(['mkdir',directories.pop(0)], stdout=FNULL, stderr=subprocess.STDOUT)
+        subprocess.Popen(["mkdir",directories.pop[0]],stdout=FNULL, stderr=subprocess.STDOUT)
 
 
 def choseDataType():
