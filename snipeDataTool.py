@@ -92,32 +92,35 @@ def studentDataTool(argument):
     #Run command or script based on user response passed as argument
     if argument == 1:
         #query GAM for needed information and write it to full_student.csv file in needed_file directory
-        GAMCOMMAND = "gam print users allfields query orgUnitPath=/Students > needed_file/full_student.csv"
-        subprocess.call(GAMCOMMAND, shell=True)
+        with open("needed_file/full_student.csv") as fileNeeded:
+            subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Students"], stdout=fileNeeded)
         os.system('python3 scripts/user_script.py')
     elif argument == 2:
         #set user_script.sh to executable
         os.system('python3 scripts/user_script.py')
     elif argument == 3:
-        START = 'python3 scripts/user_script.py'
-        subprocess.call(START, shell=True)
+        subprocess.Popen(["python3","scripts/user_script.py"])
         whichToEscalate = int(input("Do you want to escalate\n1) MS to HS\n2) ES to MS\n"))
         year = input("Please enter the graduation year desired to escalate: ")
+        awkCommand = '{print $1}'
         if whichToEscalate == 1:
             buildingOld = 'MGMS'
             buildingNew = 'MGHS'
             file = 'students/MGMS.csv'
-            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateMS_To_HS.csv"
-            os.system(createFile)
-            COMMAND = "gam update org /Students/MGHS add file students/EscalateMS_To_HS.csv"
-            subprocess.call(COMMAND, shell=True)
+            createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
+            createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
+            with open("students/EscalateMS_To_HS.csv") as fileNeeded:
+                createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
+                createFile3.communicate()
         elif whichToEscalate == 2:
             buildingOld = 'MGES'
             buildingNew = 'MGMS'
             file = 'students/MGES.csv'
-            createFile = "cat " + file + " | grep -e ^" + year + " | awk -F, '{print $1}' > students/EscalateES_To_MS.csv"
-            os.system(createFile)
-            COMMAND = "gam update org /Students/MGMS add file students/EscalateES_To_MS.csv"
+            createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
+            createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
+            with open("students/EscalateES_To_MS.csv") as fileNeeded:
+                createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
+                createFile3.communicate()
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
@@ -158,11 +161,12 @@ def cartDataTool(argument):
     #Run script depending on user choices passed as argument
     if argument == 1:
         #Change cart_script.sh to executable
-        os.system('python3 scripts/cart_script.py')
+        subprocess.Popen(["python3","scripts/cart_script.py"])
     elif argument == 2:
         #Query GAM for deprovisioned devices
-        os.system("gam print cros full query 'status:deprovisioned' > needed_file/deprovisioned_full.csv")
-        os.system('python3 scripts/deprovisioned_unit.py')
+        with open("needed_file/deprovisioned_full.csv") as fileNeeded:
+            subprocess.Popen(["gam","print","cros","full","query","status:deprovisioned"], stdout=fileNeeded)
+        subprocess.Popen(["python3","scripts/deprovisioned_unit.py"])
     else:
         print("Unknown Error! Pulling the plug!")
         time.sleep(3)
@@ -181,13 +185,12 @@ def cartToolSwitch(argument):
         return("\nYou Chose: " + desiredCartTool)
 
 def hotspotDataTool():
-    #Change hotspot_script.sh script to executable
-    os.system('python3 scripts/hotspot_script.py')
-    #Revert permission of hotspot_script.sh script
+    subprocess.Popen(["python3","scripts/hotspot_script.py"])
 
 def staffDataTool():
-    os.system("gam print users allfields query orgUnitPath=/Employees > needed_file/full_staff.csv")
-    os.system('python3 scripts/user_script.py')
+    with open("needed_file/full_staff.csv") as fileNeeded:
+        subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Employees"], stdout=fileNeeded)
+    subprocess.Popen(["python3","scripts/user_script.py"])
 
 def dataSwitch(argument):
     #Create python switch
