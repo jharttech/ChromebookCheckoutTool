@@ -57,7 +57,7 @@ def setup():
     #start while loop for number of directories
     while len(directories):
         #Make each directory
-        subprocess.Popen(["mkdir",directories.pop[0]],stdout=FNULL, stderr=subprocess.STDOUT)
+        subprocess.Popen(["mkdir",directories.pop(0)],stdout=FNULL, stderr=subprocess.STDOUT)
 
 
 def choseDataType():
