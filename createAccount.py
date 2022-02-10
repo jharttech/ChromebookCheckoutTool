@@ -34,9 +34,11 @@ def setup(argument):
     if argument == "Student":
         touchStuFile = subprocess.Popen(["touch","student.txt"])
         touchStuFile.communicate()
+        touchStuFile.wait()
     elif argument == "Staff":
         touchStaffFile = subprocess.Popen(["touch","staff.txt"])
         touchStaffFile.communicate()
+        touchStaffFile.wait()
 
 
 def choseTool():
@@ -127,16 +129,19 @@ def staffTool(argument):
                 RUN1 = subprocess.Popen(["awk","-F:",awkPrint,awkFile], stdout=subprocess.PIPE)
                 RUN2 = subprocess.Popen(["sh"], stdin=RUN1.stdout)
                 RUN2.communicate()
+                RUN2.wait()
     else:
         removeStaffFile = subprocess.Popen(["rm","staff.txt"])
         removeStaffFile.communicate()
         SEDPARAMETERS = "s/$/:" + desiredOU + "/"
         with open("staff.txt", 'w') as file:
-            subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStaff.txt"], stdout=file)
+            sedCOMMAND = subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStaff.txt"], stdout=file)
+            sedCOMMAND.wait()
         awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org Employees/"$5" && sleep 2"}'
         dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
         removeTempStaff = subprocess.Popen(["rm","tempStaff.txt"])
         removeTempStaff.communicate()
+        removeTempStaff.wait()
         print("\n")
         dryRun.communicate()
         valid = False
@@ -151,6 +156,7 @@ def staffTool(argument):
                 RUN1 = subprocess.Popen(["awk","-F:",awkPrint,awkFile], stdout=subprocess.PIPE)
                 RUN2 = subprocess.Popen(["sh"], stdin=RUN1.stdout)
                 RUN2.communicate()
+                RUN2.wait()
     for x in range(0,len(argument)):
         if argument[x] == 'y':
             switch = {
@@ -163,6 +169,7 @@ def staffTool(argument):
             ADDGROUP1 = subprocess.Popen(["awk","-F:",ADDGROUPCOMMAND,awkFile], stdout=subprocess.PIPE)
             ADDGROUP2 = subprocess.Popen(["sh"], stdin=ADDGROUP1.stdout)
             ADDGROUP2.communicate()
+            ADDGROUP2.wait()
 
 def studentOU():
     stuOrgDict = {
@@ -190,9 +197,11 @@ def studentTool(argument):
     studentFile = 'tempStudent.txt'
     editStuFile = subprocess.Popen(["vim",studentFile])
     editStuFile.communicate()
+    editStuFile.wait()
     if desiredOU == 'ALC':
         mvTempToStu = subprocess.Popen(["mv",studentFile,"student.txt"])
         mvTempToStu.communicate()
+        mvTempToStu.wait()
         awkPrintALC = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/MGHS/"$5" && sleep 2"}'
         awkFile = "student.txt"
         print("\n")
@@ -211,9 +220,11 @@ def studentTool(argument):
                 RUN = subprocess.Popen(["awl","-F:",awkPrint,awkFile],stdout=subprocess.PIPE)
                 RUN2 = subprocess.Popen(["sh"],stdin=RUN.stdout)
                 RUN2.communicate()
+                RUN2.wait()
     else:
         removeStuFile = subprocess.Popen(["rm","student.txt"])
         removeStuFile.communicate()
+        removeStuFile.wait()
         SEDPARAMETERS = "s/$/:" + desiredOU + "/"
         with open("student.txt", 'w') as file:
             INJECT = subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStudent.txt"], stdout=file)
@@ -222,6 +233,7 @@ def studentTool(argument):
         dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
         removeStuTempFile = subprocess.Popen(["rm","tempStudent.txt"])
         removeStuTempFile.communicate()
+        removeStuTempFile.wait()
         print("\n")
         valid = False
         dryRunGood = None
@@ -236,6 +248,7 @@ def studentTool(argument):
                         RUN = subprocess.Popen(["awk","-F:", awkPrint,awkFile],stdout=subprocess.PIPE)
                         RUN2 = subprocess.Popen(["sh"],stdin=RUN.stdout)
                         RUN2.communicate()
+                        RUN2.wait()
                         valid = True
                     except:
                         print("The above error occured! Pulling ejection pin now!")
