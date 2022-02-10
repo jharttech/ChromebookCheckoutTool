@@ -28,8 +28,9 @@ def main():
             #Set variable for debug sake, otherwise run function
             print("Now going to collect all cart data from GAM to ensure newest devices are listed.")
             time.sleep(3)
-            with open("needed_file/full.csv") as file:
-                subprocess.Popen(["gam","print","cros","full","query","status:provisioned"], stdout=file)
+            with open("needed_file/full.csv", 'w') as file:
+                COMMAND = subprocess.Popen(["gam","print","cros","full","query","status:provisioned"], stdout=file)
+                COMMAND.wait()
             chosenTool = cartDataType()
             #print(chosenTool) UNCOMMENT FOR DEGUB INFO
             cartDataTool(chosenTool)
@@ -92,8 +93,9 @@ def studentDataTool(argument):
     #Run command or script based on user response passed as argument
     if argument == 1:
         #query GAM for needed information and write it to full_student.csv file in needed_file directory
-        with open("needed_file/full_student.csv") as fileNeeded:
-            subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Students"], stdout=fileNeeded)
+        with open("needed_file/full_student.csv", 'w') as fileNeeded:
+            COMMAND = subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Students"], stdout=fileNeeded)
+            COMMAND.wait()
         os.system('python3 scripts/user_script.py')
     elif argument == 2:
         #set user_script.sh to executable
@@ -109,18 +111,20 @@ def studentDataTool(argument):
             file = 'students/MGMS.csv'
             createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
             createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
-            with open("students/EscalateMS_To_HS.csv") as fileNeeded:
+            with open("students/EscalateMS_To_HS.csv", 'w') as fileNeeded:
                 createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
                 createFile3.communicate()
+                createFile.wait()
         elif whichToEscalate == 2:
             buildingOld = 'MGES'
             buildingNew = 'MGMS'
             file = 'students/MGES.csv'
             createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
             createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
-            with open("students/EscalateES_To_MS.csv") as fileNeeded:
+            with open("students/EscalateES_To_MS.csv", 'w') as fileNeeded:
                 createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
                 createFile3.communicate()
+                createFile3.wait()
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
@@ -164,8 +168,9 @@ def cartDataTool(argument):
         subprocess.Popen(["python3","scripts/cart_script.py"])
     elif argument == 2:
         #Query GAM for deprovisioned devices
-        with open("needed_file/deprovisioned_full.csv") as fileNeeded:
-            subprocess.Popen(["gam","print","cros","full","query","status:deprovisioned"], stdout=fileNeeded)
+        with open("needed_file/deprovisioned_full.csv", 'w') as fileNeeded:
+            COMMAND = subprocess.Popen(["gam","print","cros","full","query","status:deprovisioned"], stdout=fileNeeded)
+            COMMAND.wait()
         subprocess.Popen(["python3","scripts/deprovisioned_unit.py"])
     else:
         print("Unknown Error! Pulling the plug!")
@@ -188,8 +193,9 @@ def hotspotDataTool():
     subprocess.Popen(["python3","scripts/hotspot_script.py"])
 
 def staffDataTool():
-    with open("needed_file/full_staff.csv") as fileNeeded:
-        subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Employees"], stdout=fileNeeded)
+    with open("needed_file/full_staff.csv", 'w') as fileNeeded:
+        COMMAND = subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Employees"], stdout=fileNeeded)
+        COMMAND.wait()
     subprocess.Popen(["python3","scripts/user_script.py"])
 
 def dataSwitch(argument):
