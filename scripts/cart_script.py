@@ -10,6 +10,7 @@ def main():
         dest = 'carts/cartFull.csv'
         moveFile = subprocess.Popen(["mv",file,dest])
         moveFile.communicate()
+        moveFile.wait()
         print("All cart data has been compiled into ...ChromebookCheckoutTool/carts/cartFull.csv")
         exit()
     cart = getCart(building)
