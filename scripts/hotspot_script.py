@@ -71,6 +71,7 @@ def createHotspotEntry(info):
     masterFile = 'hotspots/hotspot_master_list.csv'
     touchMasterFile = subprocess.Popen(["touch",masterFile])
     touchMasterFile.communicate()
+    touchMasterFile.wait()
     print("Now going to ask for information about each hotspot being added.")
     for n in range(0,counter):
         valid = False
@@ -85,6 +86,7 @@ def createHotspotEntry(info):
                 valid = True
                 touchFile = subprocess.Popen(["touch",file])
                 touchFile.communicate()
+                touchFile.wait()
                 shutil.copy(template,file)
                 with open(masterFile, mode='r') as csv_file:
                     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -97,6 +99,7 @@ def createHotspotEntry(info):
                             print("This hotspot record will not be added to csv file. This is recorded in ...ChromebookCheckoutTool/hotspots/errorLog.csv file.")
                             touchErrFile = subprocess.Popen(["touch",errorFile])
                             touchErrFile.communicate()
+                            touchErrFile.wait()
                             timestamp = datetime.datetime.now()
                             tempLine = (timestamp, 'DUPLICATE ERROR', 'hotspot', info.get('brand'), 'MG Schools', info.get('manufacturer'),
                                         info.get('isoDate'), info.get('cost'), info.get('poNumber'),
