@@ -1,6 +1,7 @@
 import csv
 import subprocess
 import datetime
+import shutil
 
 def main():
     info = getHotspotInfo()
@@ -65,10 +66,12 @@ def createHotspotEntry(info):
                     'Asset Tag', 'Serial Number', 'Sim Card Number']
     file = ('hotspots/' + str(info.get('isoDate') + "-PO" + info.get('poNumber') + "-hotspots.csv"))
     template = ('needed_file/hotspot_template.csv')
-    CopyTemplate = ('cat ' + template + ' > ' + file)
+    #copyTemplate = ('cat ' + template + ' > ' + file)
     errorFile = 'hotspots/errorLog.csv'
     masterFile = 'hotspots/hotspot_master_list.csv'
-    subprocess.call(['touch',masterFile])
+    touchMasterFile = subprocess.Popen(["touch",masterFile])
+    touchMasterFile.communicate()
+    touchMasterFile.wait()
     print("Now going to ask for information about each hotspot being added.")
     for n in range(0,counter):
         valid = False
@@ -81,8 +84,10 @@ def createHotspotEntry(info):
             response = input("Is that information correct? (y/n): ").lower()
             if response == 'y':
                 valid = True
-                subprocess.call(['touch',file])
-                subprocess.call(CopyTemplate, shell=True)
+                touchFile = subprocess.Popen(["touch",file])
+                touchFile.communicate()
+                touchFile.wait()
+                shutil.copy(template,file)
                 with open(masterFile, mode='r') as csv_file:
                     csv_reader = csv.reader(csv_file, delimiter=',')
                     for row in csv_reader:
@@ -92,7 +97,9 @@ def createHotspotEntry(info):
                             errorNum += 1
                             print("Duplicate detected with Serial Number: " + serialNumber)
                             print("This hotspot record will not be added to csv file. This is recorded in ...ChromebookCheckoutTool/hotspots/errorLog.csv file.")
-                            subprocess.call(['touch',errorFile])
+                            touchErrFile = subprocess.Popen(["touch",errorFile])
+                            touchErrFile.communicate()
+                            touchErrFile.wait()
                             timestamp = datetime.datetime.now()
                             tempLine = (timestamp, 'DUPLICATE ERROR', 'hotspot', info.get('brand'), 'MG Schools', info.get('manufacturer'),
                                         info.get('isoDate'), info.get('cost'), info.get('poNumber'),
