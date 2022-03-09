@@ -190,13 +190,16 @@ def cartToolSwitch(argument):
         return("\nYou Chose: " + desiredCartTool)
 
 def hotspotDataTool():
-    subprocess.Popen(["python3","scripts/hotspot_script.py"])
+    COMMAND = subprocess.Popen(["python3","scripts/hotspot_script.py"])
+    COMMAND.wait()
 
 def staffDataTool():
     with open("needed_file/full_staff.csv", 'w') as fileNeeded:
         COMMAND = subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Employees"], stdout=fileNeeded)
         COMMAND.wait()
-    subprocess.Popen(["python3","scripts/user_script.py"])
+    LAUNCHSCRIPT = subprocess.Popen(["python3","scripts/user_script.py"])
+    LAUNCHSCRIPT.wait()
+
 
 def dataSwitch(argument):
     #Create python switch
