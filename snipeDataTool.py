@@ -165,13 +165,16 @@ def cartDataTool(argument):
     #Run script depending on user choices passed as argument
     if argument == 1:
         #Change cart_script.sh to executable
-        subprocess.Popen(["python3","scripts/cart_script.py"])
+        COMMAND = subprocess.Popen(["python3","scripts/cart_script.py"])
+        COMMAND.wait()
     elif argument == 2:
         #Query GAM for deprovisioned devices
         with open("needed_file/deprovisioned_full.csv", 'w') as fileNeeded:
             COMMAND = subprocess.Popen(["gam","print","cros","full","query","status:deprovisioned"], stdout=fileNeeded)
             COMMAND.wait()
-        subprocess.Popen(["python3","scripts/deprovisioned_unit.py"])
+        LAUNCHSCRIPT = subprocess.Popen(["python3","scripts/deprovisioned_unit.py"])
+        LAUNCHSCRIPT.wait()
+
     else:
         print("Unknown Error! Pulling the plug!")
         time.sleep(3)
