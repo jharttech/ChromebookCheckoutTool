@@ -72,7 +72,7 @@ def choseDataType():
     valid = False
     while valid == False:
         #Take user input
-        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) Staff Data\n5)Find Device by UUID\n6) EXIT\n"))
+        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) Staff Data\n5) Find Device by UUID\n6) EXIT\n"))
         #Return value from dataSwitch function
         firstResponse = dataSwitch(dataType)
         correct = input(str(firstResponse) + "\nIs this correct: (y/n) ").lower()
