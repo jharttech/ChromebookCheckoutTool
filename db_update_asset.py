@@ -14,9 +14,9 @@ def main():
     filename = str(argv[1])
     tool = None
     dbBackedUp = None
-    while dbBackedUp not in ['y','Y','n','N']:
-        dbBackedUp = input("Have you backed up your database? (y/n)\n")
-        if dbBackedUp == 'n' or dbBackedUp == 'N':
+    while dbBackedUp not in ['y','n']:
+        dbBackedUp.lower() = input("Have you backed up your database? (y/n)\n")
+        if dbBackedUp == 'n':
             exit(1)
         else:
             continue
