@@ -195,6 +195,9 @@ def studentOU():
 def studentTool(argument):
     desiredOU = argument[0]
     studentFile = 'tempStudent.txt'
+    touchFile = subprocess.Popen(['touch',studentFile])
+    touchFile.communicate()
+    touchFile.wait()
     editStuFile = subprocess.Popen(["vim",studentFile])
     editStuFile.communicate()
     editStuFile.wait()
@@ -228,6 +231,7 @@ def studentTool(argument):
         SEDPARAMETERS = "s/$/:" + desiredOU + "/"
         with open("student.txt", 'w') as file:
             INJECT = subprocess.Popen(["sed","-e",SEDPARAMETERS,"tempStudent.txt"], stdout=file)
+            INJECT.wait()
         awkPrint = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org Students/"$5" && sleep 2"}'
         awkFile = "student.txt"
         dryRun = subprocess.Popen(["awk","-F:",awkPrint,awkFile])
