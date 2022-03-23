@@ -116,6 +116,7 @@ def staffTool(argument):
         print("\n")
         dryRun = subprocess.Popen(["awk","-F:",DRYCOMMAND,awkFile])
         dryRun.communicate()
+        dryRun.wait()
         valid = False
         dryRunGood = None
         while not valid:
@@ -144,6 +145,7 @@ def staffTool(argument):
         removeTempStaff.wait()
         print("\n")
         dryRun.communicate()
+        dryRun.wait()
         valid = False
         dryRunGood = None
         while not valid:
