@@ -3,7 +3,6 @@ import csv
 import mysql.connector
 from mysql.connector import Error
 import datetime
-import os
 import subprocess
 
 sanityCheck = ['y','n']
