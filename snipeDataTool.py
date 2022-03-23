@@ -5,6 +5,8 @@ import os
 import subprocess
 import time
 
+sanityCheck = ['y','n']
+
 # input
 def main():
     #clear screen
@@ -38,15 +40,19 @@ def main():
             hotspotDataTool()
         elif chosenData == 4:
             staffDataTool()
+        elif chosenData == 5:
+            findByUUIDTool()
         else:
             print("Unknown error, bailing out!")
             time.sleep(3)
             #End while loop
             quit = True
-        leave = input("\nOperation Complete. You are now ready to transfer data to your SnipeIT server.\nDo you want to perform any other tasks? (y/n) ").lower()
+        leave = None
+        while leave not in sanityCheck:
+            leave = input("\nOperation Complete. You are now ready to transfer data to your SnipeIT server.\nDo you want to perform any other tasks? (y/n) ").lower()
         #Take user input
-        if leave == 'n':
-            quit = True
+            if leave == 'n':
+                quit = True
     print("Have a great day! ~Jhart")
     exit()
 
@@ -66,7 +72,7 @@ def choseDataType():
     valid = False
     while valid == False:
         #Take user input
-        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) Staff Data\n5) EXIT\n"))
+        dataType = int(input("\nPlease type the number of the desired data type: \n1) Student Data\n2) Cart Data\n3) Hotspot Data\n4) Staff Data\n5)Find Device by UUID\n6) EXIT\n"))
         #Return value from dataSwitch function
         firstResponse = dataSwitch(dataType)
         correct = input(str(firstResponse) + "\nIs this correct: (y/n) ").lower()
@@ -203,6 +209,10 @@ def staffDataTool():
     LAUNCHSCRIPT = subprocess.Popen(["python3","scripts/user_script.py"])
     LAUNCHSCRIPT.wait()
 
+def findByUUIDTool():
+    LAUNCHSCRIPT = subprocess.Popen(["python3", "scripts/findDeviceByUUID.py"])
+    LAUNCHSCRIPT.wait()
+
 
 def dataSwitch(argument):
     #Create python switch
@@ -210,10 +220,11 @@ def dataSwitch(argument):
     1: "Student Data",
     2: "Cart Data",
     3: "Hotspot Data",
-    4: "Staff Data"
+    4: "Staff Data",
+    5: "Find Device By UUID"
     }
-    #Set option 4 as exit command
-    if argument == 5:
+    #Set option 6 as exit command
+    if argument == 6:
         exit()
     response = switch.get(argument, "Invalid option!")
     if response == "Invalid option!":
