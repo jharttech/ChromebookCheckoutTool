@@ -5,6 +5,8 @@ from mysql.connector import Error
 import datetime
 import subprocess
 
+sanityCheck = ['y','n']
+
 def main():
     check = len(argv)
 
@@ -14,10 +16,23 @@ def main():
     filename = str(argv[1])
     tool = None
     dbBackedUp = None
-    while dbBackedUp not in ['y','Y','n','N']:
-        dbBackedUp = input("Have you backed up your database? (y/n)\n")
-        if dbBackedUp == 'n' or dbBackedUp == 'N':
-            exit(1)
+    while dbBackedUp not in sanityCheck:
+        dbBackedUp = input("Have you backed up your database? (y/n)\n").lower()
+        if dbBackedUp == 'n':
+            askBackup = None
+            while askBackup not in sanityCheck:
+                askBackup = input("Would you like to backup the snipeIT database now? (y/n)\n").lower()
+                if askBackup == 'y':
+                    dbUsername = input("Please enter the DB user name: \n")
+                    dbname = input("Please enter the name of the DB: \n")
+                    sqlName = input("Please enter the desired file name of the sql dump: \n")
+                    sqlName = (sqlName + '.sql')
+                    with open(sqlName, 'wb') as file:
+                        writeDump = subprocess.Popen(["mysqldump","-u",dbUsername,"-p","--routines","--triggers",dbname], stdout=file)
+                        writeDump.communicate()
+                        writeDump.wait()
+                else:
+                    continue
         else:
             continue
     while tool != 'EXIT':
