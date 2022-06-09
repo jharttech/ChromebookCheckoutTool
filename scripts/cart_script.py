@@ -172,7 +172,7 @@ def getNumOfCarts(building):
                     tempList.append(row[num])
     for z in range(0,len(tempList)):
         tempCartNames = tempList[z].split('/')
-        if building in tempCartNames[len(tempCartNames) - 1]:
+        if building in tempList[z]:
             cartNames.append(tempCartNames[len(tempCartNames) - 1])
     return cartNames
 
