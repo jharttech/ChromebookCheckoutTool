@@ -193,7 +193,7 @@ def getBuildingNames():
                         num = x
                         line_count += 1
             else:
-                tempBuilding = row[num].split('/')
+                tempBuilding = row[num].upper().split('/')
                 if (len(tempBuilding)) > 3 and tempBuilding[2] not in buildingList:
                     buildingList.append(tempBuilding[2])
     return buildingList
