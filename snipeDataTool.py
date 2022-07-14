@@ -100,6 +100,7 @@ def studentDataTool(argument):
     if argument == 1:
         #query GAM for needed information and write it to full_student.csv file in needed_file directory
         with open("needed_file/full_student.csv", 'w') as fileNeeded:
+            #FIXME
             COMMAND = subprocess.Popen(["gam","print","users","allfields","query","orgUnitPath=/Students"], stdout=fileNeeded)
             COMMAND.wait()
         os.system('python3 scripts/user_script.py')
@@ -107,30 +108,48 @@ def studentDataTool(argument):
         #set user_script.sh to executable
         os.system('python3 scripts/user_script.py')
     elif argument == 3:
-        subprocess.Popen(["python3","scripts/user_script.py"])
+        COMMAND = subprocess.Popen(["python3","scripts/user_script.py"])
+        COMMAND.communicate()
+        COMMAND.wait()
         whichToEscalate = int(input("Do you want to escalate\n1) MS to HS\n2) ES to MS\n"))
         year = input("Please enter the graduation year desired to escalate: ")
+        year = ("^"+year)
         awkCommand = '{print $1}'
         if whichToEscalate == 1:
             buildingOld = 'MGMS'
             buildingNew = 'MGHS'
-            file = 'students/MGMS.csv'
-            createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
-            createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
+            file = 'students/studentFull.csv'
             with open("students/EscalateMS_To_HS.csv", 'w') as fileNeeded:
-                createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
-                createFile3.communicate()
-                createFile.wait()
-        elif whichToEscalate == 2:
-            buildingOld = 'MGES'
-            buildingNew = 'MGMS'
-            file = 'students/MGES.csv'
-            createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
-            createFile2 = subprocess.Popen(["grep","-e","^",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
-            with open("students/EscalateES_To_MS.csv", 'w') as fileNeeded:
+                createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
+                createFile2 = subprocess.Popen(["grep","-e",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
                 createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
                 createFile3.communicate()
                 createFile3.wait()
+                fileNeeded.seek(0)
+            awk_command = '{print "gam update user "$0" org /Students/MGHS "}'
+            escalate_1 = subprocess.Popen(["cat","students/EscalateMS_To_HS.csv"], stdout=subprocess.PIPE)
+            escalate_2 = subprocess.Popen(["awk",awk_command], stdin=escalate_1.stdout, stdout=subprocess.PIPE)
+            escalate_run = subprocess.Popen(["sh"], stdin=escalate_2.stdout)
+            escalate_run.communicate()
+            escalate_run.wait()
+        elif whichToEscalate == 2:
+            buildingOld = 'MGES'
+            buildingNew = 'MGMS'
+            file = 'students/studentFull.csv'
+            with open("students/EscalateES_To_MS.csv", 'w') as fileNeeded:
+                createFile1 = subprocess.Popen(["cat",file], stdout=subprocess.PIPE)
+                createFile2 = subprocess.Popen(["grep","-e",year], stdin=createFile1.stdout, stdout=subprocess.PIPE)
+                createFile3 = subprocess.Popen(["awk","-F,",awkCommand], stdin=createFile2.stdout, stdout=fileNeeded)
+                createFile3.communicate()
+                createFile3.wait()
+                fileNeeded.seek(0)
+            awk_command = '{print "gam update user "$0" org /Students/MGMS "}'
+            escalate_1 = subprocess.Popen(["cat","students/EscalateES_To_MS.csv"], stdout=subprocess.PIPE)
+            escalate_2 = subprocess.Popen(["awk",awk_command], stdin=escalate_1.stdout, stdout=subprocess.PIPE)
+            escalate_run = subprocess.Popen(["sh"], stdin=escalate_2.stdout)
+            escalate_run.communicate()
+            escalate_run.wait()
+        return
     else:
         print("Unknown Error! Sealing Blast Doors!")
         time.sleep(3)
