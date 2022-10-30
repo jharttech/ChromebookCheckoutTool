@@ -88,7 +88,7 @@ class Stage_csv:
                     sys.exit(f"Error getting needed fields for csv row")
 
             if temp_row != []:
-                return lines,this.o_filename
+                return lines,this.o_filename.account_type
             else:
                 sys.exit(f"Error: no {account_type} data to add. Exiting now...")
 
@@ -97,14 +97,46 @@ class Compose:
     def __init__(self,staged_data):
         self.o_filename = staged_data[1]
         self.lines = staged_data[0]
-        with open(f'needed_file/{self.o_filename}.csv', mode = 'w') as csv_file:
+        with open(f'needed_file/{self.o_filename}', mode = 'w') as csv_file:
             for i in range(0,len(self.lines)):
                 full = csv.writer(csv_file,delimiter=',')
                 full.writerow(lines[i])
+
+
+class Building_names:
+    def __init__(self,staged_data):
+        self.building_list = []
+        self.temp_building = []
+        self.num = None
+        
+        building(self,staged_data[2],staged_data[1])
+
+    def buildings(self, account_type,o_filename):
+        with open(f"needed_file/{o_filename}", mode="r") as csv_file:
+            csv_reader = csv.reader(csv_file,delimiter=',')
+            line_count = 0
+            ...
+
+
+
+class Building:
+    def __init__(self, building_names):
+        self.building_list = FIXME
+        ...
                     
 
-def move_file(location,filename):
+def move_file(staged_data):
+    filename = f"needed_file/{staged_data[1]}"
+    destination = f"{staged_data[2]}/{staged_data[1]}"
+    if staged_data[2] == "student:
+        building_names = Building_names(staged_data)
+        building = Building()
+        if building != 'ALL'
+    subprocess.Popen(["mv",filename,destination], stout=subprocess.PIPE)
+    subprocess.wait()
+    return(f"All {staged_data[2]} has been compiled into ..ChromebookCheckoutTool/{destination}")
     
+
 
 
 def main():
@@ -114,6 +146,7 @@ def main():
     else:
         staged = Stage_csv(account_type)
     Compose(staged)
+    move_file(staged)
 
 
 if __name__ == "__main__":
