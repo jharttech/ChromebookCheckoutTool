@@ -12,7 +12,7 @@ class Account_type:
             "3": "exit"
         }
 
-        a_type = dict.get(account)
+        a_type = self.dict.get(account)
         return a_type
 
 
