@@ -36,29 +36,28 @@ class Stage_csv:
         ]
         self.header_to_num = {}
         self.lines = []
-        self.temp_row = []
-        self.num = None
+
+        if account_type == "staff":
+            self.i_filename = "full_staff.csv"
+            self.o_filename = "fullStaff.csv"
+            self.notes = "EMPLOYEE"
+        elif account_type == "student":
+            self.i_filename = "full_student.csv"
+            self.o_filename = "fullStudent.csv"
+            self.notes = "Initial Import"
+        else:
+            raise ValueError("Invalid account type!")
 
         stage(self.g_headers,self.header_to_num,account_type
-        ,self.lines)
+        ,self.lines,self.i_filename,self.o_filename,self.notes)
 
-    def stage(self,g_headers,header_to_num,account_type,lines):
-        if account_type == "staff":
-            this.i_filename = "full_staff.csv"
-            this.o_filename = "fullStaff.csv"
-        elif account_type == "student":
-            this.i_filename = "full_student.csv"
-            this.o_filename = "fullStudent.csv"
-        else:
-            raise ValueError
-
-        with open(f"needed_file/{this.i_filename}") as csv_file:
+    def stage(self,g_headers,header_to_num,account_type,lines,i_filename,o_filename,notes):
+        with open(f"needed_file/{i_filename}") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             n_col = len(next(csv_reader))
             csv_file.seek(0)
             line_count = 0
             header_row = ['Email','First Name','Last Name','Location','Notes','Username']
-            notes = 'EMPLOYEE'
 
             lines.append(header_row)
 
@@ -90,24 +89,20 @@ class Stage_csv:
                     sys.exit(f"Error getting needed fields for csv row")
 
             if temp_row != []:
-                with open(f'needed_file/{this.o_filename}.csv', mode = 'w') as csv_file:
-                    for i in range(0,len(lines)):
-                        full = csv.writer(csv_file,delimiter=',')
-                        full.writerow(lines[i])
+                return lines,this.o_filename
             else:
-                sys.exit(f"Error: no {account_type} data to add.  Now going to exit...")
+                sys.exit(f"Error: no {account_type} data to add. Exiting now...")
 
+
+class Compose:
+    def __init__(self,staged_data):
+        self.o_filename = staged_data[1]
+        self.lines = staged_data[0]
+        with open(f'needed_file/{self.o_filename}.csv', mode = 'w') as csv_file:
+            for i in range(0,len(self.lines)):
+                full = csv.writer(csv_file,delimiter=',')
+                full.writerow(lines[i])
                     
-
-
-
-
-
-
-             
-
-
-
 
 def main():
     account_type = Account_type()
@@ -115,6 +110,7 @@ def main():
         sys.exit("You have chosen to exit.")
     else:
         staged = Stage_csv(account_type)
+    Compose(staged)
 
 
 if __name__ == "__main__":
