@@ -13,8 +13,7 @@ class Account_type:
         }
 
         a_type = self.dict.get(account)
-        return a_type
-
+        return a_typ
 
     @classmethod
     def get(cls):
@@ -103,6 +102,10 @@ class Compose:
                 full = csv.writer(csv_file,delimiter=',')
                 full.writerow(lines[i])
                     
+
+def move_file(location,filename):
+    
+
 
 def main():
     account_type = Account_type()
