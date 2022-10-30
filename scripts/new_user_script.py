@@ -47,8 +47,7 @@ class Stage_csv:
         else:
             raise ValueError("Invalid account type!")
 
-        stage(self.g_headers,self.header_to_num,account_type
-        ,self.lines,self.i_filename,self.o_filename,self.notes)
+        stage(self.g_headers,self.header_to_num,account_type,self.lines,self.i_filename,self.o_filename,self.notes)
 
     def stage(self,g_headers,header_to_num,account_type,lines,i_filename,o_filename,notes):
         with open(f"needed_file/{i_filename}") as csv_file:
