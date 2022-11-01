@@ -12,8 +12,11 @@ class Account_type:
             "3": "exit"
         }
 
-        a_type = self.dict.get(account)
-        return a_typ
+        self.a_type = self.dict.get(account)
+        #input(f"account is {self.a_type}")
+
+    def __str__(self):
+        return self.a_type
 
     @classmethod
     def get(cls):
@@ -22,7 +25,7 @@ class Account_type:
             if not re.search(r"^([1-3])$", account):
                 print(f"Please enter 1, 2, or 3")
             else:
-                return account
+                return cls(account)
 
 
 class Stage_csv:
@@ -35,115 +38,156 @@ class Stage_csv:
         ]
         self.header_to_num = {}
         self.lines = []
+        self.account_type = str(account_type)
+        self.result = []
+        #input(f"account type is {self.account_type}")
 
-        if account_type == "staff":
+
+        if self.account_type == "staff":
+            print(f"made it to staff account type")
             self.i_filename = "full_staff.csv"
             self.o_filename = "fullStaff.csv"
             self.notes = "EMPLOYEE"
-        elif account_type == "student":
+        elif self.account_type == "student":
+            print(f"Made it to student account type")
             self.i_filename = "full_student.csv"
             self.o_filename = "fullStudent.csv"
             self.notes = "Initial Import"
         else:
             raise ValueError("Invalid account type!")
 
-        stage(self.g_headers,self.header_to_num,account_type,self.lines,self.i_filename,self.o_filename,self.notes)
+        #self.stage()#self.g_headers,self.header_to_num,self.account_type,self.lines,self.i_filename,self.o_filename,self.notes)
 
-    def stage(self,g_headers,header_to_num,account_type,lines,i_filename,o_filename,notes):
-        with open(f"needed_file/{i_filename}") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            n_col = len(next(csv_reader))
-            csv_file.seek(0)
-            line_count = 0
-            header_row = ['Email','First Name','Last Name','Location','Notes','Username']
+    def stage(self):#,g_headers,header_to_num,account_type,lines,i_filename,o_filename,notes):
+        with open(f"needed_file/{self.i_filename}") as self.csv_file:
+            self.csv_reader = csv.reader(self.csv_file, delimiter=',')
+            self.n_col = len(next(self.csv_reader))
+            self.csv_file.seek(0)
+            self.line_count = 0
+            self.header_row = ['Email','First Name','Last Name','Location','Notes','Username']
 
-            lines.append(header_row)
+            self.lines.append(self.header_row)
 
-            for row in csv_reader:
-                while line_count == 0:
-                    for x in range(0,n_col):
-                        col_name = str(row[x])
-                        if col_name in header:
-                            header_to_num.update({col_name:x})
-                    line_count += 1
-                
-                try:
-                    username = row[header_to_num.get('primaryEmail',"Error getting header number for primaryEmail")].split('@')
-                    username = username[0]
-                except:
-                    sys.exit(f"Error with primaryEmail field, please check the 'needed_file/{this.filename}'")
+            for row in self.csv_reader:
+                if self.line_count == 0:
+                    for x in range(0,self.n_col):
+                        self.col_name = str(row[x])
+                        if self.col_name in self.g_headers:
+                            self.header_to_num.update({self.col_name:x})
+                    self.line_count += 1
+                else:  
+                    try:
+                        self.username = row[self.header_to_num.get('primaryEmail',"Error getting header number for primaryEmail")].split('@')
+                        self.username = self.username[0]
+                    except:
+                        sys.exit(f"Error with primaryEmail field, please check the 'needed_file/{self.i_filename}'")
+                    #DEBUGprint(self.header_to_num)
+                    try:
+                        self.temp_row = [
+                            row[self.header_to_num.get('primaryEmail',"Error getting header number for primaryEmail")],
+                            row[self.header_to_num.get('name.givenName',"Error getting header number for givenName")],
+                            row[self.header_to_num.get('name.familyName',"Error getting header number for familyName")],
+                            row[self.header_to_num.get('orgUnitPath',"Error getting header number for orgUnitPath")],
+                            self.notes,
+                            self.username
+                        ]
+                        #DEBUGinput(f"temp row is {self.temp_row}")
+                        #DEBUGinput(f"self.lines is {self.lines}")
+                        self.lines.append(self.temp_row)
+                    except:
+                        sys.exit(f"Error getting needed fields for csv row")
 
-                try:
-                    temp_row = [
-                        row[header_to_num.get('primaryEmail',"Error getting header number for primaryEmail")],
-                        row[header_to_num.get('name.givenName',"Error getting header number for givenName")],
-                        row[header_to_num.get('name.familyName',"Error getting header number for familyName")],
-                        row[header_to_num.get('orgUnitPath',"Error getting header number for orgUnitPath")],
-                        notes,
-                        username
-                    ]
-                    lines.append(temp_row)
-                except:
-                    sys.exit(f"Error getting needed fields for csv row")
-
-            if temp_row != []:
-                return lines,this.o_filename.account_type
+            if self.temp_row != []:
+                return [self.lines,self.o_filename,self.account_type]
             else:
-                sys.exit(f"Error: no {account_type} data to add. Exiting now...")
+                sys.exit(f"Error: no {self.account_type} data to add. Exiting now...")
 
 
 class Compose:
     def __init__(self,staged_data):
         self.o_filename = staged_data[1]
         self.lines = staged_data[0]
-        with open(f'needed_file/{self.o_filename}', mode = 'w') as csv_file:
+        with open(f'needed_file/{self.o_filename}', mode = 'w') as self.csv_file:
             for i in range(0,len(self.lines)):
-                full = csv.writer(csv_file,delimiter=',')
-                full.writerow(lines[i])
+                self.full = csv.writer(self.csv_file,delimiter=',')
+                self.full.writerow(self.lines[i])
 
 
 class Building_names:
     def __init__(self,staged_data):
         self.building_list = []
         self.temp_building = []
+        self.o_filename = staged_data[1]
         self.num = None
         
-        building(self,staged_data[2],staged_data[1])
+        #self.buildings(self,staged_data[2],staged_data[1])
 
-    def buildings(self, account_type,o_filename):
-        with open(f"needed_file/{o_filename}", mode="r") as csv_file:
-            csv_reader = csv.reader(csv_file,delimiter=',')
-            line_count = 0
-            ...
-
+    def buildings(self):
+        with open(f"needed_file/{self.o_filename}", mode="r") as self.csv_file:
+            self.csv_reader = csv.reader(self.csv_file,delimiter=',')
+            self.line_count = 0
+            self.n_col = len(next(self.csv_reader))
+            self.csv_file.seek(0)
+            for row in self.csv_reader:
+                if self.line_count == 0:
+                    for x in range(0,self.n_col):
+                        if (column_name := str(row[x])) == 'Location':
+                            self.num = x
+                            self.line_count += 1
+                else:
+                    self.temp_building = row[self.num].split('/')
+                    #DEBUGprint(f"temp building list is {self.temp_building}")
+                    if self.temp_building[len(self.temp_building) - 1] not in self.building_list:
+                        self.building_list.append(self.temp_building[len(self.temp_building)-1])
+        return self.building_list
 
 
 class Building:
-    def __init__(self, building_names):
-        self.building_list = FIXME
-        ...
+    def __init__(self, building):
+        self.building = building
+
+
+    def __str__(self):
+        return self.building
+
+
+    @classmethod
+    def get(cls, building_list):
+        buildings = building_list
+        buildings.append("ALL")
+        while True:
+            building = input(f"Please enter the building of data wanted:\n {buildings}\n")
+            if building not in buildings:
+                print("Invalid Building")
+            else:
+                return cls(building)
                     
 
 def move_file(staged_data):
     filename = f"needed_file/{staged_data[1]}"
     destination = f"{staged_data[2]}/{staged_data[1]}"
-    if staged_data[2] == "student:
-        building_names = Building_names(staged_data)
-        building = Building()
-        if building != 'ALL'
-    subprocess.Popen(["mv",filename,destination], stout=subprocess.PIPE)
-    subprocess.wait()
-    return(f"All {staged_data[2]} has been compiled into ..ChromebookCheckoutTool/{destination}")
+    if staged_data[2] == "student":
+        building_names = Building_names(staged_data).buildings()
+        input(f"building_names are {building_names}")
+        building = Building.get(building_names)
+        input(building)
+        if str(building) != 'ALL':
+            ...
+        else:
+            subprocess.Popen(["mv",filename,destination], stdout=subprocess.PIPE)
+            return(f"All {staged_data[2]} has been compiled into ..ChromebookCheckoutTool/{destination}")
     
 
 
 
 def main():
-    account_type = Account_type()
+    account_type = Account_type.get()
+    #print(f"account type is {account_type}")
     if account_type == "exit":
         sys.exit("You have chosen to exit.")
     else:
-        staged = Stage_csv(account_type)
+        staged = Stage_csv(account_type).stage()
+        #DEBUGprint(f"staged is {staged}")
     Compose(staged)
     move_file(staged)
 
