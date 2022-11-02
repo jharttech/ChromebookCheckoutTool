@@ -11,7 +11,8 @@ class Account_type:
         self.dict = {"1": "student", "2": "staff", "3": "exit"}
 
         self.a_type = self.dict.get(account)
-        # input(f"account is {self.a_type}")
+        if self.a_type == "exit":
+            sys.exit("You have chosen to exit.")
 
     def __str__(self):
         return self.a_type
@@ -20,7 +21,7 @@ class Account_type:
     def get(cls):
         while True:
             account = input(
-                "Would you like to work with: \n1) student \nor \n2) staff\n"
+                "Would you like to work with: \n1) student\n2) staff\n3) exit\n"
             )
             # Use regex to sanitize user input for validation
             if not re.search(r"^([1-3])$", account):
@@ -211,8 +212,10 @@ class Building:
         # all buildings
         buildings.append("ALL")
         while True:
+            for l in range(len(buildings)):
+                print(buildings[l])
             building = input(
-                f"Please enter the building of data wanted:\n {buildings}\n"
+                f"Please enter the building of data wanted: "
             )
             if building not in buildings:
                 print("Invalid Building")
@@ -303,11 +306,7 @@ def move_file(staged_data):
 # Main function in case this script is called independently of the main create_account.py program
 def main():
     account_type = Account_type.get()
-    # print(f"account type is {account_type}")
-    if account_type == "exit":
-        sys.exit("You have chosen to exit.")
-    else:
-        staged = Stage_csv(account_type).stage()
+    staged = Stage_csv(account_type).stage()
     Compose(staged)
     move_file(staged)
 
