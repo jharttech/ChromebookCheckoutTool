@@ -162,7 +162,40 @@ class Building:
             else:
                 return cls(building)
 
+class Sort_students:
+    def __init__(self, building, i_filename):
+        self.building = building
+        self.i_filename = i_filename
 
+    def sort(self):
+        with open(f'{self.i_filename}', mode = 'r') as self.csv_file_read:
+            self.csv_reader = csv.reader(self.csv_file_read, delimiter=',')
+            self.line_count = 0
+            self.lines = []
+            self.n_cols = len(next(self.csv_reader))
+            self.csv_file_read.seek(0)
+            for row in self.csv_reader:
+                if self.line_count == 0:
+                    for x in range(0,self.n_cols):
+                        if (column_name := str(row[x])) == "Location":
+                            self.num = x
+                    self.lines.append(row)
+                    self.line_count += 1
+                elif (self.line_count != 0) and (row[self.num].__contains__("ALC")):
+                    #DEBUGprint(f"full building is {row[self.num]}")
+                    self.temp_building = row[self.num].split('/')
+                    self.temp_building = self.temp_building[len(self.temp_building) - 1]
+                    #DEBUGinput(f"temp buildings are {self.temp_building}")
+                    #DEBUGinput(f"Self building is {self.building}")
+                    if str(self.temp_building) == str(self.building):
+                        self.lines.append(row)
+                        #DEBUGprint(row)
+                else:
+                    continue
+        with open(f"student/{self.building}.csv", mode='w') as self.csv_file_write:
+            for i in range(0,len(self.lines)):
+                self.o_file = csv.writer(self.csv_file_write, delimiter=',')
+                self.o_file.writerow(self.lines[i])
                     
 
 def move_file(staged_data):
@@ -174,10 +207,11 @@ def move_file(staged_data):
         building = Building.get(building_names)
         input(building)
         if str(building) != 'ALL':
-            ...
+            Sort_students(building, filename).sort()
+            print(f"All {staged_data[2]} in {building} has been compiled into ..ChromebookCheckoutTool/{staged_data[2]}/{building}.csv")
         else:
             subprocess.Popen(["mv",filename,destination], stdout=subprocess.PIPE)
-            return(f"All {staged_data[2]} has been compiled into ..ChromebookCheckoutTool/{destination}")
+            print(f"All {staged_data[2]} has been compiled into ..ChromebookCheckoutTool/{destination}")
     
 
 
