@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import re
+import csv
 from scripts import new_user_script
 
 
@@ -12,9 +13,8 @@ class Setup():
 
 
 class Campus_OUs:
-    def __init__(self, account_type):
+    def __init__(self):
         ...
-
 
 
     def ou_dict(self, account_type):
@@ -27,26 +27,32 @@ class Campus_OUs:
             self.ou_type = "Students"
         
         self.org_unit_dict = {}
-        self.all_ou = subprocess.Popen(["gam","print","orgs"], stdout=subprocess.PIPE)
-        self.result = all_ou.stdout.read().decode()
-        self.all_ou.wait()
-        with open(f"needed_file/result.csv", mode='w') as self.temp_file:
-            self.temp_file.write(result)
+        #self.all_ou = subprocess.Popen(["gam","print","orgs"], stdout=subprocess.PIPE)
+        #self.result = all_ou.stdout.read().decode()
+        #self.all_ou.wait()
+        #with open(f"needed_file/result.csv", mode='w') as self.temp_file:
+            #self.temp_file.write(result)
 
-        with open(f"needed_file/result", mode='r') as self.csv_file_read:
-            self.csv_reader = csv.reader(self.csv_file_read, delimiter=',')
-            self.n_col = len(next(self.csv_reader))
+        with open(f"needed_file/result.csv", mode='r') as self.csv_file_read:
+            self.read_file = csv.reader(self.csv_file_read, delimiter=',')
+            self.n_col = len(next(self.read_file))
+            self.csv_file_read.seek(0)
             self.line_count = 0
-            for row in self.csv_reader:
-                if self.line_count = 0:
+            self.dict_key_count = 0
+            for row in self.read_file:
+                print(f"row is {row}")
+                if self.line_count == 0:
                     for x in range(0, self.n_col):
                         self.col_name = str(row[x])
                         if str(self.col_name) == "orgUnitPath":
                             self.num = x
                             self.line_count += 1
                 else:
-                    if self.ou_type in str(row[x]):
-                        self.org_unit_dict.update({f"{x}":self.str(row[x])})    # GETOU = "gam print orgs"
+                    self.line_count+=1
+                    print(str(self.ou_type))
+                    if str(self.ou_type) in row[self.num]:
+                        self.dict_key_count += 1
+                        self.org_unit_dict.update({str(self.dict_key_count):row[self.num]})
         # listOU = list(subprocess.call(GETOU, shell=True))
         # for x in range(0,len(listOU)):
         #     orgUnitDict.update({x + 1 : listOU[x]})
@@ -92,32 +98,32 @@ class Campus_groups:
     #then ask the user to input what groups they want the user to
     #be a member of
     #gam print groups
+    def groups_dict(self):
+        self.group_dict = {
+            "1":"staff_print",
+            "2":"all_staff",
+            "3":"classroom"
+        }
+        return self.group_dict
 
     
 class Assign_groups:
-    def __init__(self, staff_print, all_staff, classroom):
-        self.staff_print = staff_print
-        self.all_staff = all_staff
-        self.classroom = classroom
+    #Finish this class, may use getter setter 
+    def __init__(self,groups):
+        self.groups = groups
+        
         
     @classmethod
-    def get(cls,):
+    def get(cls,campus_groups):
         assigned_groups = []
         
-        def response(answer):
-            if not re.search(r"^(y|n)$", answer):
-                print("Invalid response, please answer 'y' or 'n'.")
-            else:
-                return True
-                
-        while True:
-            staff_print = input(f"\nDoes the employee need to cloud print? (y/n): ").lower()
-            if response(staff_print):
-                break
-            if staff_print == 'y':
-                assigned_groups.append('staff_print')
+        group_wanted = input(f"""\nPlease enter the numbers of the groups
+the user will need be a member of: (Comma seperated: ex. 1,2,3)\n""")
+        group_wanted = group_wanted.split(",")
+        for i in range(0,len(group_wanted)):
+            assigned_groups.append(campus_groups.get(group_wanted[i]))
         
-        return assigned_groups
+        return cls(assigned_groups)
             
 def dict_print(data):
     print("\n")
@@ -129,12 +135,15 @@ def main():
     print("Welcome to the MG Create Account Tool\n")
     account_type = new_user_script.Account_type.get()
     Setup(account_type)
-    campus_OUs = Campus_OUs().ou_dict()
+    campus_OUs = Campus_OUs().ou_dict(account_type)
+    print(campus_OUs)
     dict_print(campus_OUs)
     OU = Assign_OU(None).get(campus_OUs)
-    print(account_type)
     if str(account_type) == "staff":
-        groups = Assign_groups(None,None,None).get()
+        campus_groups = Campus_groups().groups_dict()
+        dict_print(campus_groups)
+        groups = Assign_groups(None).get(campus_groups)
+        print(groups)
     print(OU)
 
 
