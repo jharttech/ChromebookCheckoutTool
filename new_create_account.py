@@ -98,19 +98,45 @@ class Campus_groups:
     #then ask the user to input what groups they want the user to
     #be a member of
     #gam print groups
+
+    
     def groups_dict(self):
-        self.group_dict = {
-            "1":"staff_print",
-            "2":"all_staff",
-            "3":"classroom"
-        }
+        self.group_dict = {}
+        with open(f"needed_file/group_data.csv", mode='r') as self.csv_file_read:
+            self.read_file = csv.reader(self.csv_file_read, delimiter=',')
+            self.n_col = len(next(self.read_file))
+            self.csv_file_read.seek(0)
+            self.line_count = 0
+            self.dict_key_count = 0
+            for row in self.read_file:
+                print(f"row is {row}")
+                if self.line_count == 0:
+                    for x in range(0, self.n_col):
+                        self.col_name = str(row[x])
+                        if str(self.col_name) == "Email":
+                            self.num = x
+                            self.line_count += 1
+                else:
+                    self.line_count+=1
+                    self.dict_key_count += 1
+                    self.group_dict.update({str(self.dict_key_count):row[self.num]})
+        #self.group_dict = {
+         #   "1":"staff_print",
+          #  "2":"all_staff",
+           # "3":"classroom"
+        #}
         return self.group_dict
 
     
 class Assign_groups:
     #Finish this class, may use getter setter 
-    def __init__(self,groups):
+    def __init__(self, groups):
+        self.group_list(groups)
+
+    
+    def group_list(self,groups):
         self.groups = groups
+        return self.groups
         
         
     @classmethod
@@ -143,7 +169,6 @@ def main():
         campus_groups = Campus_groups().groups_dict()
         dict_print(campus_groups)
         groups = Assign_groups(None).get(campus_groups)
-        print(groups)
     print(OU)
 
 
