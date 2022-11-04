@@ -156,6 +156,43 @@ def dict_print(data):
     [print(key,':',value) for key, value in data.items()]
 
 
+class Create_Account:
+    def __init__(self,account_type,wanted_ou,groups):
+        self.account_type = account_type
+        self.sed_params = f"s|$|:{wanted_ou}|"
+        self.temp_file = f"{account_type}/temp_{account_type}.txt"
+
+        subprocess.Popen(["touch",self.temp_file], stdout=subprocess.PIPE)
+        self.edit_file = subprocess.Popen(["vim",self.temp_file])
+        self.edit_file.wait()
+
+        self.copy_file(self.temp_file,self.account_type)
+
+        with open(self.temp_file, mode='w') as file:
+            inject_org = subprocess.Popen(["sed","-e",self.sed_params,self.temp_file], stdout=file)
+            inject_org.wait()
+
+        self.gam(self.account_type,wanted_ou,groups)
+
+    def copy_file(self,temp_file,account_type):
+        cp = subprocess.Popen(["cp",temp_file,f"{account_type}/{account_type}.txt"], stdout=subprocess.PIPE)
+        cp.wait()
+
+    def gam(self,account_type,wanted_ou,groups):
+        self.account_type = account_type
+        self.awk_file = f"{self.account_type}/{self.account_type}.txt"
+
+        if str(self.account_type) == "student":
+            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org "$5" && sleep 2"}'
+        elif str(self.account_type) == "staff":
+            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org "$5" && sleep2"}'
+        
+        self.dry_run = subprocess.Popen(["awk","-F:",self.awk_line,self.awk_file], stdout=subprocess.PIPE)
+        self.dry_run.communicate()
+        print(f"{self.dry_run}")
+
+
+
 def main():
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
     print("Welcome to the MG Create Account Tool\n")
@@ -169,6 +206,9 @@ def main():
         campus_groups = Campus_groups().groups_dict()
         dict_print(campus_groups)
         groups = Assign_groups(None).get(campus_groups)
+        Create_Account(account_type,OU,groups)
+    else:
+        Create_Account(account_type,OU,None)
     print(OU)
 
 
