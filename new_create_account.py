@@ -40,6 +40,7 @@ class Campus_OUs:
             self.line_count = 0
             self.dict_key_count = 0
             for row in self.read_file:
+                print(f"row is {row}")
                 if self.line_count == 0:
                     for x in range(0, self.n_col):
                         self.col_name = str(row[x])
@@ -48,6 +49,7 @@ class Campus_OUs:
                             self.line_count += 1
                 else:
                     self.line_count+=1
+                    print(str(self.ou_type))
                     if str(self.ou_type) in row[self.num]:
                         self.dict_key_count += 1
                         self.org_unit_dict.update({str(self.dict_key_count):row[self.num]})
@@ -157,67 +159,62 @@ def dict_print(data):
 class Create_Account:
     def __init__(self,account_type,wanted_ou,groups):
         self.account_type = account_type
-        self.sed_params = f"s|$|:{wanted_ou}|"
+        self.sed_params = (f"s,$,:{wanted_ou},")
         self.temp_file = f"{account_type}/temp_{account_type}.txt"
-        
-        self.del_old = subprocess.Popen(["rm",self.temp_file], stdout=subprocess.PIPE)
-        self.del_old.wait()
-        
+        self.awk_file = f"{self.account_type}/{self.account_type}.txt"
+
         subprocess.Popen(["touch",self.temp_file], stdout=subprocess.PIPE)
-        
         self.edit_file = subprocess.Popen(["vim",self.temp_file])
         self.edit_file.wait()
+        input("stop1")
 
-        self.copy_file(self.temp_file,self.account_type)
+        self.copy_file(self.temp_file,self.awk_file)
 
-        with open(f"{account_type}/{account_type}.txt", mode='w') as file:
-            inject_org = subprocess.Popen(["sed","-e",self.sed_params,self.temp_file], stdout=file)
-            inject_org.wait()
-
-        self.gam(self.account_type,wanted_ou,groups)
-
-    def copy_file(self,temp_file,account_type):
-        cp = subprocess.Popen(["cp",temp_file,f"{account_type}/{account_type}.txt"], stdout=subprocess.PIPE)
-        cp.wait()
+        with open(self.awk_file, mode='w') as self.file:
+            self.inject_org = subprocess.Popen(["sed","-e",self.sed_params,self.temp_file], stdout=self.file)
+            self.inject_org.wait()
+            self.inject_org.communicate()
         
+            
+        input("stop")
 
-    def gam(self,account_type,wanted_ou,groups):
+        self.gam(self.account_type,wanted_ou,groups,self.awk_file)
+
+    def copy_file(self,temp_file,awk_file):
+        cp = subprocess.Popen(["cp",temp_file,awk_file], stdout=subprocess.PIPE)
+        cp.wait()
+
+    def gam(self,account_type,wanted_ou,groups,awk_file):
         self.account_type = account_type
-        self.run = "sh"
-        self.awk_file = f"{self.account_type}/{self.account_type}.txt"
-        print(f"awk_file is {self.awk_file}")
 
         if str(self.account_type) == "student":
             self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org "$5" && sleep 2"}'
         elif str(self.account_type) == "staff":
             self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org "$5" && sleep2"}'
         
-        self.dry_run = subprocess.Popen(["awk","-F:",self.awk_line,self.awk_file], stdout=subprocess.PIPE)
-        self.dry_run_result = self.dry_run.stdout.read().decode()
-        print(f"{self.dry_run_result}")
         
+        self.dry_run = subprocess.Popen(["awk","-F:",self.awk_line,self.awk_file], stdout=subprocess.PIPE)
+        self.gam_command = str(self.dry_run.stdout.read().decode())
+        print(self.gam_command)
+
         while True:
-            self.g_t_g = input(f"Does the above dry run(s) look correct? y/n").lower()
-            
-            if not re.search(r"^([y|n])$", self.g_t_g):
-                print(f"Please enter 'y' or 'n'")
+            yn = input(f"Does the above command look correct? y/n ").lower()
+            if not re.search(r"^(y|n)$", yn):
+                print(f"Invalid response please enter 'y' or 'n'")
             else:
                 break
-        
-        if str(self.g_t_g) == "n":
-            self.__init__(self.account_type,wanted_ou,groups)
+
+        if yn == "n":
+            self.__init__(account_type,wanted_ou,groups)
         else:
-            #subprocess.Popen(["awk","-F:",self.awk_line,self.awk_file])
-            self.runit = subprocess.Popen(["sh"], stdin=self.dry_run.stdout, stdout=subprocess.PIPE)
-            self.runit.wait()
-            self.response = self.runit.stdout.read().decode()
-            print(f"response {self.response}")
-
-
-class Add_to_group:
-    def __init__(self)
-    #FIX
-    ...
+            try:
+                self.holder = subprocess.Popen([self.gam_command], stdout=subprocess.PIPE)
+                self.run = subprocess.Popen(["sh"], stin=self.holder.stdout, stdout=subprocess.PIPE)
+                print(f"{self.run.stdout.read().decode()}")
+                self.run.communicate()
+                self.run.wait()
+            except: #DEBUG
+                sys.exit("There was an error trying to create the accounts. Exiting now!")
 
 
 def main():
@@ -236,7 +233,7 @@ def main():
         Create_Account(account_type,OU,groups)
     else:
         Create_Account(account_type,OU,None)
-        Add_to_group(account_type,groups)
+    print(OU)
 
 
 if __name__=="__main__":
