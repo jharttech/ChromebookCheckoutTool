@@ -150,6 +150,11 @@ the user will need be a member of: (Comma seperated: ex. 1,2,3)\n""")
             assigned_groups.append(campus_groups.get(group_wanted[i]))
         
         return cls(assigned_groups)
+    
+    
+class Add_to_group:
+    def __init__(self,groups,staff_user):
+        ...
             
 def dict_print(data):
     print("\n")
@@ -209,13 +214,16 @@ class Create_Account:
         else:
             try:
                 self.holder = subprocess.Popen([self.gam_command], stdout=subprocess.PIPE)
-                self.run = subprocess.Popen(["sh"], stin=self.holder.stdout, stdout=subprocess.PIPE)
+                self.run = subprocess.Popen(["sh"], stdin=self.holder.stdout, stdout=subprocess.PIPE)
                 print(f"{self.run.stdout.read().decode()}")
                 self.run.communicate()
                 self.run.wait()
-            except: #DEBUG
-                sys.exit("There was an error trying to create the accounts. Exiting now!")
-
+            except FileNotFoundError as e: #DEBUG
+                print(f"Error: {e.args[1]} (")
+                #print(sys.exc_info()[0])
+                #sys.exit("There was an error trying to create the accounts. Exiting now!")
+            finally:
+                print("finally")
 
 def main():
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
@@ -226,13 +234,16 @@ def main():
     print(campus_OUs)
     dict_print(campus_OUs)
     OU = Assign_OU(None).get(campus_OUs)
+    
     if str(account_type) == "staff":
         campus_groups = Campus_groups().groups_dict()
         dict_print(campus_groups)
         groups = Assign_groups(None).get(campus_groups)
         Create_Account(account_type,OU,groups)
+        Add_to_group(groups,staff_user)
     else:
         Create_Account(account_type,OU,None)
+    
     print(OU)
 
 
