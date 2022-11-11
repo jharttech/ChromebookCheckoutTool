@@ -220,9 +220,9 @@ class Create_Account:
         self.awk_file = awk_file
 
         if str(self.account_type) == "student":
-            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org "$5" && sleep 2"}'
+            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org \'"$5"\' && sleep 2"}'
         elif str(self.account_type) == "staff":
-            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org "$5" && sleep2"}'
+            self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org \'"$5"\' && sleep2"}'
 
         self.dry_run = subprocess.Popen(
             ["awk", "-F:", self.awk_line, self.awk_file], stdout=subprocess.PIPE
