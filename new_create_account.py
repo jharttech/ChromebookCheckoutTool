@@ -10,11 +10,12 @@ class Setup:
     def __init__(self, account_type):
         # Create a directory with the account type the user chose
         subprocess.Popen(["mkdir",str(account_type)], stdout=subprocess.DEVNULL)
+        subprocess.Popen(["mkdir","logs"], stdout=subprocess.DEVNULL)
         self.account_type = account_type
         # Assign the new file and path to a variable
         n_file = f"{account_type}/{account_type}.txt"
         # Create the empty file 
-        subprocess.Popen(["touch", n_file], stdout=subprocess.PIPE)
+        subprocess.Popen(["touch", n_file], stdout=subprocess.DEVNULL)
 
 
 # The Campus_OUs class gathers the campus OU's and puts them into a dictionary with numeric keys
@@ -143,6 +144,8 @@ class Assign_groups:
         self.assigned_groups = assigned_groups
         self.account_type = account_type
         self.groups = assigned_groups
+        if "NO GROUPS" in str(self.groups):
+            return
         # start the Add_to_group Class
         Add_to_group(self.groups, self.account_type)
 
@@ -176,7 +179,7 @@ class Add_to_group:
                             f"gam update group {self.groups[x]} add user {row[0]}"
                         )
                         self.run_gam = subprocess.Popen(
-                            [self.command], stdout=subprocess.PIPE
+                            ["gam","update","group",str(self.groups[x]), "add","user",str(row[0])], stdout=subprocess.PIPE
                         )
                         self.run_gam.wait()
                     except FileNotFoundError as e:
@@ -186,14 +189,15 @@ class Add_to_group:
 class Create_Account:
     def __init__(self, account_type, wanted_ou):
         self.account_type = account_type
-        self.sed_params = f"s,$,:{wanted_ou},"
-        self.temp_file = f"{account_type}/temp_{account_type}.txt"
+        self.wanted_ou = str(wanted_ou)
+        if "&" in self.wanted_ou:
+            self.wanted_ou = self.wanted_ou.replace("&", "\&")
+        self.sed_params = f"s,$,:{self.wanted_ou},"
+        self.temp_file = f"{self.account_type}/temp_{self.account_type}.txt"
         self.awk_file = f"{self.account_type}/{self.account_type}.txt"
-
         subprocess.Popen(["touch", self.temp_file], stdout=subprocess.PIPE)
         self.edit_file = subprocess.Popen(["vim", self.temp_file])
         self.edit_file.wait()
-        input("stop1")
 
         self.copy_file(self.temp_file, self.awk_file)
 
@@ -204,8 +208,6 @@ class Create_Account:
             self.inject_org.wait()
             self.inject_org.communicate()
 
-        input("stop")
-
         self.gam(self.account_type, wanted_ou, self.awk_file)
 
     def copy_file(self, temp_file, awk_file):
@@ -214,6 +216,7 @@ class Create_Account:
 
     def gam(self, account_type, wanted_ou, awk_file):
         self.account_type = account_type
+        self.wanted_ou = str(wanted_ou)
         self.awk_file = awk_file
 
         if str(self.account_type) == "student":
@@ -239,13 +242,11 @@ class Create_Account:
         else:
             try:
                 self.holder = subprocess.Popen(
-                    [self.gam_command], stdout=subprocess.PIPE
+                    ["awk","-F:",self.awk_line,self.awk_file], stdout=subprocess.PIPE
                 )
                 self.run = subprocess.Popen(
                     ["sh"], stdin=self.holder.stdout, stdout=subprocess.PIPE
                 )
-                print(f"{self.run.stdout.read().decode()}")
-                self.run.communicate()
                 self.run.wait()
             except FileNotFoundError as e:
                 raise (e)
@@ -262,15 +263,12 @@ def main():
     account_type = new_user_script.Account_type.get()
     Setup(account_type)
     campus_OUs = Campus_OUs().ou_dict(account_type)
-    print(campus_OUs)
     dict_print(campus_OUs)
     OU = Assign_OU(None).get(campus_OUs)
-
-    if str(account_type) == "staff":
-        Create_Account(account_type, OU)
-        campus_groups = Campus_groups().groups_dict()
-        dict_print(campus_groups)
-        groups = Assign_groups.get(campus_groups, account_type)
+    Create_Account(account_type, OU)
+    campus_groups = Campus_groups().groups_dict()
+    dict_print(campus_groups)
+    groups = Assign_groups.get(campus_groups, account_type)
 
     while True:
         restart = input(
