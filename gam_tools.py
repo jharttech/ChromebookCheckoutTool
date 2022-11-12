@@ -1,5 +1,5 @@
 import subprocess
-import new_create_account
+import create_account
 
 
 class Tool:
@@ -23,11 +23,11 @@ def main():
     }
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
     print("Welcome to the MG Create Account Tool\n")
-    new_create_account.dict_print(tool_dict)
+    create_account.dict_print(tool_dict)
     tool = Tool.get(tool_dict)
     # Change to case in the future since case switch exists Python >= 3.10
     if str(tool) == "create_account":
-        new_create_account.main()
+        create_account.main()
 
 
 if __name__ == "__main__":
