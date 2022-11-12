@@ -21,7 +21,7 @@ class Account_type:
     def get(cls):
         while True:
             account = input(
-                "Would you like to work with: \n1) student\n2) staff\n3) exit\n"
+                "Would you like to work with: \n1 : student\n2 : staff\n3 : exit\n"
             )
             # Use regex to sanitize user input for validation
             if not re.search(r"^([1-3])$", account):
