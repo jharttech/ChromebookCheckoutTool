@@ -3,7 +3,7 @@ import subprocess
 import re
 import csv
 import datetime
-from scripts import new_user_script
+from scripts import user_script
 
 
 # The Setup Class creates the needed Directory and then creates an empyt file that will be needed
@@ -287,7 +287,7 @@ def dict_print(data):
 def main():
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
     print("Welcome to the MG Create Account Tool\n")
-    account_type = new_user_script.Account_type.get()
+    account_type = user_script.Account_type.get()
     Setup(account_type)
     campus_OUs = Campus_OUs().ou_dict(account_type)
     dict_print(campus_OUs)
