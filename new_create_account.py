@@ -2,6 +2,7 @@ import sys
 import subprocess
 import re
 import csv
+import datetime
 from scripts import new_user_script
 
 
@@ -9,12 +10,12 @@ from scripts import new_user_script
 class Setup:
     def __init__(self, account_type):
         # Create a directory with the account type the user chose
-        subprocess.Popen(["mkdir",str(account_type)], stdout=subprocess.DEVNULL)
-        subprocess.Popen(["mkdir","logs"], stdout=subprocess.DEVNULL)
+        subprocess.Popen(["mkdir", str(account_type)], stdout=subprocess.DEVNULL)
+        subprocess.Popen(["mkdir", "logs"], stdout=subprocess.DEVNULL)
         self.account_type = account_type
         # Assign the new file and path to a variable
         n_file = f"{account_type}/{account_type}.txt"
-        # Create the empty file 
+        # Create the empty file
         subprocess.Popen(["touch", n_file], stdout=subprocess.DEVNULL)
 
 
@@ -132,11 +133,12 @@ class Campus_groups:
                     self.dict_key_count += 1
                     # Write the keys and values to the dictionary
                     self.group_dict.update({str(self.dict_key_count): row[self.num]})
-        
-        # Append the NO GROUPS value to the dictionary        
+
+        # Append the NO GROUPS value to the dictionary
         self.group_dict.update({str(self.dict_key_count + 1): "NO GROUPS"})
 
         return self.group_dict
+
 
 # The Assign_groups class askes the user what groups they user needs to be a part of if
 class Assign_groups:
@@ -179,8 +181,18 @@ class Add_to_group:
                             f"gam update group {self.groups[x]} add user {row[0]}"
                         )
                         self.run_gam = subprocess.Popen(
-                            ["gam","update","group",str(self.groups[x]), "add","user",str(row[0])], stdout=subprocess.PIPE
+                            [
+                                "gam",
+                                "update",
+                                "group",
+                                str(self.groups[x]),
+                                "add",
+                                "user",
+                                str(row[0]),
+                            ],
+                            stdout=subprocess.PIPE,
                         )
+                        print(self.command)
                         self.run_gam.wait()
                     except FileNotFoundError as e:
                         raise (e)
@@ -242,7 +254,7 @@ class Create_Account:
         else:
             try:
                 self.holder = subprocess.Popen(
-                    ["awk","-F:",self.awk_line,self.awk_file], stdout=subprocess.PIPE
+                    ["awk", "-F:", self.awk_line, self.awk_file], stdout=subprocess.PIPE
                 )
                 self.run = subprocess.Popen(
                     ["sh"], stdin=self.holder.stdout, stdout=subprocess.PIPE
@@ -250,6 +262,21 @@ class Create_Account:
                 self.run.wait()
             except FileNotFoundError as e:
                 raise (e)
+
+        subprocess.Popen(["rm", self.temp_file], stdout=subprocess.PIPE)
+
+
+def log_file(account_type):
+    account_type = str(account_type)
+    filepath = f"{account_type}/{account_type}.txt"
+    x = datetime.datetime.now()
+    log_file_name = (
+        f"logs/{account_type}-{x.year}{x.month}{x.day}{x.hour}{x.minute}{x.second}"
+    )
+    create_log = subprocess.Popen(
+        ["cp", filepath, log_file_name], stdout=subprocess.PIPE
+    )
+    create_log.wait()
 
 
 def dict_print(data):
@@ -269,6 +296,7 @@ def main():
     campus_groups = Campus_groups().groups_dict()
     dict_print(campus_groups)
     groups = Assign_groups.get(campus_groups, account_type)
+    log_file(account_type)
 
     while True:
         restart = input(
