@@ -3,7 +3,7 @@ import subprocess
 import re
 import csv
 import datetime
-from scripts import user_script
+import user_script
 
 
 # The Setup Class creates the needed Directory and then creates an empyt file that will be needed
@@ -164,6 +164,7 @@ the user will need be a member of: (Comma seperated: ex. 1,2,3)\n"""
         )
         group_wanted = group_wanted.split(",")
         for i in range(0, len(group_wanted)):
+            # Append each needed group to the assigned groups list
             assigned_groups.append(campus_groups.get(group_wanted[i]))
 
         return cls(assigned_groups, account_type)
@@ -172,14 +173,18 @@ the user will need be a member of: (Comma seperated: ex. 1,2,3)\n"""
 class Add_to_group:
     def __init__(self, groups, account_type):
         self.groups = groups
+        # Open up the needed file
         with open(f"{account_type}/{account_type}.txt") as self.file:
             self.reader = csv.reader(self.file, delimiter=":")
+            # Loop through each row
             for row in self.reader:
+                # Loop through each inde of the groups list
                 for x in range(0, len(self.groups)):
                     try:
                         self.command = (
                             f"gam update group {self.groups[x]} add user {row[0]}"
                         )
+                        # Added the user on current row to the needed groups
                         self.run_gam = subprocess.Popen(
                             [
                                 "gam",
@@ -202,43 +207,56 @@ class Create_Account:
     def __init__(self, account_type, wanted_ou):
         self.account_type = account_type
         self.wanted_ou = str(wanted_ou)
+        # Checking for ampersand in org unit name, this will break sed if not escaped first
         if "&" in self.wanted_ou:
+            # If an ampersand is found in the org unit, escape it
             self.wanted_ou = self.wanted_ou.replace("&", "\&")
+        # Set the paramaters wanted for the sed command
         self.sed_params = f"s,$,:{self.wanted_ou},"
         self.temp_file = f"{self.account_type}/temp_{self.account_type}.txt"
         self.awk_file = f"{self.account_type}/{self.account_type}.txt"
         subprocess.Popen(["touch", self.temp_file], stdout=subprocess.PIPE)
+        # Open the file with vim to add the desired account lines
         self.edit_file = subprocess.Popen(["vim", self.temp_file])
         self.edit_file.wait()
 
+        # Copy the temp file to the production file
         self.copy_file(self.temp_file, self.awk_file)
 
         with open(self.awk_file, mode="w") as self.file:
+            # Inject the Org Unit to the end of each line in the account file
             self.inject_org = subprocess.Popen(
                 ["sed", "-e", self.sed_params, self.temp_file], stdout=self.file
             )
             self.inject_org.wait()
             self.inject_org.communicate()
 
+        # Start the gam method
         self.gam(self.account_type, wanted_ou, self.awk_file)
 
+    # The copy_file method simply copies from the temp file to the production file
     def copy_file(self, temp_file, awk_file):
         cp = subprocess.Popen(["cp", temp_file, awk_file], stdout=subprocess.PIPE)
         cp.wait()
 
+    # The gam method handles all gam commands that are needed to create the new accounts
     def gam(self, account_type, wanted_ou, awk_file):
         self.account_type = account_type
         self.wanted_ou = str(wanted_ou)
         self.awk_file = awk_file
 
         if str(self.account_type) == "student":
+            # Set gal to false for students so they do not show up in the directory when creating an email
             self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal off org \'"$5"\' && sleep 2"}'
         elif str(self.account_type) == "staff":
+            # Set gal to true for staff so they DO show up in the directory when creating an email
             self.awk_line = '{print "gam create user "$1" firstname "$2" lastname "$3" password "$4" gal on org \'"$5"\' && sleep2"}'
 
+        # Set dry run command for user to preview the command
         self.dry_run = subprocess.Popen(
             ["awk", "-F:", self.awk_line, self.awk_file], stdout=subprocess.PIPE
         )
+        # Read the dry run command
         self.gam_command = str(self.dry_run.stdout.read().decode())
         print(self.gam_command)
 
@@ -250,12 +268,15 @@ class Create_Account:
                 break
 
         if yn == "n":
+            # Restart the create account class
             self.__init__(account_type, wanted_ou)
         else:
             try:
+                # Stage the real awk command
                 self.holder = subprocess.Popen(
                     ["awk", "-F:", self.awk_line, self.awk_file], stdout=subprocess.PIPE
                 )
+                # Execute the awk command
                 self.run = subprocess.Popen(
                     ["sh"], stdin=self.holder.stdout, stdout=subprocess.PIPE
                 )
@@ -263,9 +284,12 @@ class Create_Account:
             except FileNotFoundError as e:
                 raise (e)
 
+        # Remove the temp file
         subprocess.Popen(["rm", self.temp_file], stdout=subprocess.PIPE)
 
 
+# The log_file function writes a log file or created accounts in case needing to look at
+# Past account creations
 def log_file(account_type):
     account_type = str(account_type)
     filepath = f"{account_type}/{account_type}.txt"
@@ -279,26 +303,38 @@ def log_file(account_type):
     create_log.wait()
 
 
+# The dict_print function simply prints dictionaries in a nice format
 def dict_print(data):
     print("\n")
     [print(key, ":", value) for key, value in data.items()]
 
 
 def main():
+    # Clear the screen
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
     print("Welcome to the MG Create Account Tool\n")
+    # Call the Account_type class from the user_script module
     account_type = user_script.Account_type.get()
+    # Run the Setup class
     Setup(account_type)
+    # Run the Campus_OUs class to get the OUs available in the campus and save the return to variable
     campus_OUs = Campus_OUs().ou_dict(account_type)
+    # Call the dict_print function to print the desired dictionary
     dict_print(campus_OUs)
+    # Run the Assign_OU class and assign the return to variable
     OU = Assign_OU(None).get(campus_OUs)
+    # Run the Create_Account class to create the account
     Create_Account(account_type, OU)
+    # Run the Campus_groups class to get available groups in the campus
     campus_groups = Campus_groups().groups_dict()
     dict_print(campus_groups)
-    groups = Assign_groups.get(campus_groups, account_type)
+    # Run the Assign groups class to assign the user to the desired groups
+    Assign_groups.get(campus_groups, account_type)
+    # Write the log file
     log_file(account_type)
 
     while True:
+        # Check if user wants to perform more actions and if so, restart this tool
         restart = input(
             f"Account creations and group additions sucessfull. Would you like to create more accounts? y/n "
         ).lower()
@@ -307,6 +343,7 @@ def main():
         else:
             break
     if str(restart) == "y":
+        # Restart this tool
         main()
     else:
         sys.exit("Thank you!  -Jhart")
