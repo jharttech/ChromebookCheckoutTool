@@ -1,5 +1,5 @@
 import subprocess
-import create_account
+from scripts import create_account
 
 
 class Tool:
@@ -19,7 +19,7 @@ class Tool:
 def main():
     tool_dict = {
         "1":"create_account",
-        "2":"find_device_by_uuid"
+        "2":"find_device_by_uuid",
         "2":"Exit"
     }
     subprocess.Popen(["clear"], stdout=subprocess.PIPE)
@@ -29,8 +29,9 @@ def main():
     # Change to case in the future since case switch exists Python >= 3.10
     if str(tool) == "create_account":
         create_account.main()
-    elif str(tool) == "find_device_by_uuid"
+    elif str(tool) == "find_device_by_uuid":
         #PICK UP HERE
+        ...
 
 
 if __name__ == "__main__":
