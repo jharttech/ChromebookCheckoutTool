@@ -66,7 +66,7 @@ class Stage_csv:
     def stage(
         self,
     ):
-        with open(f"needed_file/{self.i_filename}") as self.csv_file:
+        with open(f"needed_file/{self.i_filename}", mode="r") as self.csv_file:
             self.csv_reader = csv.reader(self.csv_file, delimiter=",")
             self.n_col = len(next(self.csv_reader))
             self.csv_file.seek(0)
